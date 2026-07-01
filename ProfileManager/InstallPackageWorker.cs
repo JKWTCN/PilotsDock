@@ -90,6 +90,13 @@ namespace ProfileManager
                 if (!FilesInstalled)
                     return;
 
+                if (PackageFile.HasStreamDeckProfiles)
+                {
+                    ShowStreamDeckConversionNotice();
+                    OpenStreamDeckProfileFolder();
+                    return;
+                }
+
                 if (PackageFile.CountProfiles > 0)
                 {
                     if (await AddStreamDockProfilesAsync() && await CheckProfilesInstalled() && OptionRemoveOldProfiles)
@@ -156,6 +163,48 @@ namespace ProfileManager
             }
 
             return result;
+        }
+
+        protected void ShowStreamDeckConversionNotice()
+        {
+            var task = TaskStore.Add("StreamDeck Profile Conversion Required");
+            task.DisplayCompleted = true;
+            task.AddMessage($"This package contains StreamDeck {Parameters.STREAMDECK_PROFILE_EXTENSION} files. Please use this plugin to convert the scene for {Parameters.PlatformName}:", true, false, false, FontWeights.DemiBold);
+
+            var link = task.AddLink(Parameters.STREAMDECK_CONVERSION_PLUGIN_URL, OpenStreamDeckConversionPlugin);
+            link.LinkStyleBold = true;
+            link.LinkFontSize = 12;
+
+            task.AddMessage($"The extracted profile folder has been opened:\r\n{PackageFile.ProfileFolderPath}", false, false, false);
+            task.SetSuccess("StreamDeck profiles extracted for conversion.");
+            task.IsCompleted = true;
+        }
+
+        protected static void OpenStreamDeckConversionPlugin()
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo(Parameters.STREAMDECK_CONVERSION_PLUGIN_URL) { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                TaskStore.CurrentTask.SetError($"Unable to open conversion plugin page: {ex.Message}");
+                Logger.LogException(ex);
+            }
+        }
+
+        protected void OpenStreamDeckProfileFolder()
+        {
+            try
+            {
+                Logger.Debug($"Opening StreamDeck Profile Folder '{PackageFile.ProfileFolderPath}'");
+                Process.Start(new ProcessStartInfo(PackageFile.ProfileFolderPath) { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                TaskStore.CurrentTask.SetError($"Unable to open extracted StreamDeck Profile folder: {ex.Message}");
+                Logger.LogException(ex);
+            }
         }
 
         protected static void OpenProfileFile(PackageFile.PackagedProfile profile, TaskModel task)

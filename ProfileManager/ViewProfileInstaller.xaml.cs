@@ -223,6 +223,7 @@ namespace ProfileManager
                         displayList.Add($"New: {profile.FileName}");
                 }
                 AddTreeItems($"{PackageFile.CountProfiles} Profiles", displayList, null, true);
+                AddTreeItems($"{PackageFile.CountStreamDeckProfiles} StreamDeck Profiles (conversion required)", PackageFile.FilesStreamDeckProfiles, new SolidColorBrush(Colors.Orange), true);
                 AddTreeItems($"{PackageFile.CountImages} Images", PackageFile.FilesImages);
                 AddTreeItems($"{PackageFile.CountScripts} Scripts", PackageFile.FilesScripts);
                 AddTreeItems($"{PackageFile.CountExtras} Extras", PackageFile.FilesExtras);
@@ -240,7 +241,12 @@ namespace ProfileManager
                 }
 
                 CheckboxRemoveOld.IsChecked = InstallWorker.OptionRemoveOldProfiles;
-                if (InstallWorker.CountProfileUpdates > 0)
+                if (PackageFile.HasStreamDeckProfiles)
+                {
+                    LabelRemoveOld.Visibility = Visibility.Collapsed;
+                    CheckboxRemoveOld.Visibility = Visibility.Collapsed;
+                }
+                else if (InstallWorker.CountProfileUpdates > 0)
                 {
                     LabelRemoveOld.Visibility = Visibility.Visible;
                     CheckboxRemoveOld.Visibility = Visibility.Visible;
@@ -252,6 +258,13 @@ namespace ProfileManager
                 }
 
                 CheckboxKeepContents.IsChecked = false;
+                if (PackageFile.HasStreamDeckProfiles)
+                {
+                    CheckboxKeepContents.IsChecked = true;
+                    CheckboxKeepContents.IsEnabled = false;
+                    LabelKeepContents.ToolTip = "StreamDeck profiles must stay extracted so they can be converted.";
+                    CheckboxKeepContents.ToolTip = "StreamDeck profiles must stay extracted so they can be converted.";
+                }
             }
             catch (Exception ex)
             {

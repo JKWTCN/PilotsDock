@@ -30,6 +30,8 @@ namespace ProfileManager
         public static string SD_PROFILE_MANIFEST = "manifest.json";
         public static string SD_WINDOW_NAME = "VSD Craft";
         public static string SD_PROFILE_EXTENSION = ".SDProfile";
+        public static string STREAMDECK_PROFILE_EXTENSION = ".streamDeckProfile";
+        public static string STREAMDECK_CONVERSION_PLUGIN_URL = "https://space.key123.vip/product?id=20251206002211";
         public static readonly string PLUGIN_VERSION = Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
         // Internal plugin UUID written to profile manifests (kept as com.extension.pilotsdeck for compatibility).
         public static readonly string PLUGIN_UUID = "com.extension.pilotsdeck";

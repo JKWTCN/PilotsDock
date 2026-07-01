@@ -44,14 +44,18 @@ namespace ProfileManager
         public string VersionPlugin { get { return Manifest?.VersionPlugin; } }
         public bool KeepPackageContents { get; set; }
         public int CountProfiles { get { return PackagedProfiles.Count; } }
+        public int CountStreamDeckProfiles { get { return FilesStreamDeckProfiles.Count; } }
         public int CountImages { get { return FilesImages.Count; } }
         public int CountScripts { get { return FilesScripts.Count; } }
         public int CountExtras { get { return FilesExtras.Count; } }
-        public int CountValidTotal { get { return PackagedProfiles.Count + FilesImages.Count + FilesScripts.Count; } }
+        public int CountValidTotal { get { return PackagedProfiles.Count + FilesStreamDeckProfiles.Count + FilesImages.Count + FilesScripts.Count; } }
+        public bool HasStreamDeckProfiles { get { return CountStreamDeckProfiles > 0; } }
         public bool IsCompatible { get; protected set; } = false;
         public bool IsDisposed { get; protected set; } = false;
         public string ProfileWorkPath { get { return KeepPackageContents ? @$"{Parameters.PLUGIN_PROFILE_PATH}\{Path.GetFileNameWithoutExtension(FileName)}" : Parameters.PROFILE_WORK_PATH; } }
+        public string ProfileFolderPath { get { return @$"{ProfileWorkPath}\{Parameters.PLUGIN_PROFILE_FOLDER}"; } }
         public List<PackagedProfile> PackagedProfiles { get; protected set; } = [];
+        public List<string> FilesStreamDeckProfiles { get; protected set; } = [];
         public List<string> FilesImages { get; protected set; } = [];
         public List<string> FilesScripts { get; protected set; } = [];
         public List<string> FilesExtras { get; protected set; } = [];
@@ -185,6 +189,8 @@ namespace ProfileManager
                         else
                             PackagedProfiles.Add(new(filename, profilename));
                     }
+                    else if (IsStreamDeckProfilePath(entry.FullName))
+                        FilesStreamDeckProfiles.Add(entry.FullName.Replace($"{Parameters.PLUGIN_PROFILE_FOLDER}/", "", StringComparison.InvariantCultureIgnoreCase));
                     else if (IsImagePath(entry.FullName))
                         FilesImages.Add(entry.FullName.Replace($"{Parameters.PLUGIN_IMAGE_FOLDER}/", "", StringComparison.InvariantCultureIgnoreCase));
                     else if (IsScriptPath(entry.FullName))
@@ -194,7 +200,7 @@ namespace ProfileManager
                     else if (entry.FullName != Parameters.PACKAGE_JSON_FILE && !Path.EndsInDirectorySeparator(entry.FullName))
                         FilesUnknown.Add(entry.FullName);
                 }
-                Logger.Debug($"-> {CountProfiles} Profiles | {CountImages} Images | {CountScripts} Scripts");
+                Logger.Debug($"-> {CountProfiles} Profiles | {CountStreamDeckProfiles} StreamDeck Profiles | {CountImages} Images | {CountScripts} Scripts");
 
                 if (CountValidTotal == 0)
                 {
@@ -285,6 +291,9 @@ namespace ProfileManager
             try
             {
                 Logger.Debug($"Install Package Files ...");
+
+                if (HasStreamDeckProfiles)
+                    KeepPackageContents = true;
 
                 var task = TaskStore.Add("Install Package Files", $"Extract Archive to Work-Directory: ({ProfileWorkPath})");
                 task.DisplayCompleted = false;
@@ -417,6 +426,11 @@ namespace ProfileManager
         protected static bool IsProfilePath(string filepath)
         {
             return CheckPathBeginEnd(filepath, $"{Parameters.PLUGIN_PROFILE_FOLDER}/", Parameters.SD_PROFILE_EXTENSION);
+        }
+
+        protected static bool IsStreamDeckProfilePath(string filepath)
+        {
+            return CheckPathBeginEnd(filepath, $"{Parameters.PLUGIN_PROFILE_FOLDER}/", Parameters.STREAMDECK_PROFILE_EXTENSION);
         }
 
         protected static bool IsImagePath(string filepath)
