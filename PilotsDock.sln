@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.2.32519.379
+# Visual Studio Version 18
+VisualStudioVersion = 18.6.11828.311 oobstable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProfileManager", "ProfileManager\ProfileManager.csproj", "{302E375D-68F4-4618-A2DC-7459BE43FF3B}"
 EndProject
@@ -38,6 +38,7 @@ Global
 		{5FE665AA-18EB-4B34-A838-27A8B0C1F18F}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{5FE665AA-18EB-4B34-A838-27A8B0C1F18F}.Debug|x64.ActiveCfg = Debug|x64
 		{5FE665AA-18EB-4B34-A838-27A8B0C1F18F}.Release|Any CPU.ActiveCfg = Release|x64
+		{5FE665AA-18EB-4B34-A838-27A8B0C1F18F}.Release|Any CPU.Build.0 = Release|x64
 		{5FE665AA-18EB-4B34-A838-27A8B0C1F18F}.Release|x64.ActiveCfg = Release|x64
 		{5FE665AA-18EB-4B34-A838-27A8B0C1F18F}.Release|x64.Build.0 = Release|x64
 		{B5974C05-5C07-44C3-B345-18FAD972C1B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

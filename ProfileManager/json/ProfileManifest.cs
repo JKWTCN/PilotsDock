@@ -9,6 +9,8 @@ namespace ProfileManager.json
 {
     public class ProfileManifest
     {
+        public static readonly JsonSerializerOptions WriteOptions = new() { WriteIndented = true };
+
         [JsonIgnore]
         public string ProfileDirectory { get; set; }
 
@@ -22,6 +24,7 @@ namespace ProfileManager.json
         {
             public string Model { get; set; }
             public string UUID { get; set; }
+            public string SerialNumber { get; set; }
 
             [JsonIgnore]
             public string DeckName { get; set; }
@@ -33,15 +36,20 @@ namespace ProfileManager.json
             public string Hash { get; set; }
         }
 
-        // StreamDeck format: nested Device object
+        // In-memory helper only — never serialized back (StreamDock manifests use flat
+        // DeviceModel/DeviceUUID/DeviceSerialNumber fields, not a nested Device object).
+        [JsonIgnore]
         public ManifestDevice Device { get; set; }
 
-        // StreamDock format: flat properties
+        // StreamDock flat format fields.
         [JsonPropertyName("DeviceModel")]
         public string DeviceModel { get; set; }
 
         [JsonPropertyName("DeviceUUID")]
         public string DeviceUUID { get; set; }
+
+        [JsonPropertyName("DeviceSerialNumber")]
+        public string DeviceSerialNumber { get; set; }
 
         // Helper property to get the actual device model (supports both formats)
         [JsonIgnore]
@@ -51,9 +59,13 @@ namespace ProfileManager.json
         [JsonIgnore]
         public string ActualDeviceUUID { get { return Device?.UUID ?? DeviceUUID; } }
 
+        // Helper property to get the actual device serial (supports both formats)
+        [JsonIgnore]
+        public string ActualDeviceSerial { get { return Device?.SerialNumber ?? DeviceSerialNumber; } }
+
         // Helper property to check if this is a StreamDock manifest
         [JsonIgnore]
-        public bool IsStreamDockFormat { get { return !string.IsNullOrEmpty(DeviceModel) && Device == null; } }
+        public bool IsStreamDockFormat { get { return !string.IsNullOrEmpty(DeviceModel); } }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string InstalledByPluginUUID { get; set; } = null;
@@ -85,16 +97,25 @@ namespace ProfileManager.json
 
         public override string ToString()
         {
-            return Device != null
-                ? $"Manifest: Name {ProfileName} | IsPrepared {IsPreparedForSwitching} | Directory {ProfileDirectory} | DeckID {Device.Hash}"
-                : $"Manifest: Name {ProfileName} | IsPrepared {IsPreparedForSwitching} | Directory {ProfileDirectory} | DeckID N/A";
+            return $"Manifest: Name {ProfileName} | IsPrepared {IsPreparedForSwitching} | Directory {ProfileDirectory} | DeckID {(Device?.Hash ?? "N/A")}";
         }
 
         public void SetDeviceInfo(DeviceInfo deviceInfo)
         {
+            if (Device == null)
+                Device = new ManifestDevice();
             Device.DeckName = deviceInfo.Name;
             Device.DeckType = deviceInfo.Type;
             Logger.Verbose($"DeviceInfo was set @ {this}");
+        }
+
+        // VSD Craft (StreamDock) derives the device id it sends to plugins as
+        // MD5(DeviceUUID + DeviceSerialNumber). ProfileManager must use the same
+        // algorithm so the DeckId stored in ProfileMappings.json matches the
+        // device.id the Plugin receives at runtime.
+        public static string CreateDeviceHash(string deviceUUID, string deviceSerial)
+        {
+            return Tools.CreateMD5($"{deviceUUID ?? string.Empty}{deviceSerial ?? string.Empty}");
         }
 
         public static ProfileManifest LoadManifest(string json)
@@ -102,39 +123,33 @@ namespace ProfileManager.json
             var manifest = JsonSerializer.Deserialize<ProfileManifest>(json);
             if (manifest != null)
             {
-                // For StreamDeck format (nested Device object)
-                if (manifest.Device != null)
+                // StreamDock flat format (DeviceModel/DeviceUUID present)
+                if (!string.IsNullOrEmpty(manifest.DeviceUUID) || !string.IsNullOrEmpty(manifest.DeviceSerialNumber))
+                {
+                    manifest.Device = new ManifestDevice
+                    {
+                        Model = manifest.DeviceModel,
+                        UUID = manifest.DeviceUUID,
+                        SerialNumber = manifest.DeviceSerialNumber,
+                        Hash = CreateDeviceHash(manifest.DeviceUUID, manifest.DeviceSerialNumber)
+                    };
+                    Logger.Verbose($"StreamDock format detected - Device object created from flat properties (Hash {manifest.Device.Hash})");
+                }
+                // Legacy StreamDeck nested format
+                else if (manifest.Device != null)
                 {
                     manifest.Device.Hash = Tools.CreateMD5(manifest.Device.UUID);
                 }
-                // For StreamDock format (flat properties) - create Device for compatibility
                 else
                 {
-                    string deviceUUID = manifest.DeviceUUID;
-                    string deviceModel = manifest.DeviceModel;
-
-                    if (!string.IsNullOrEmpty(deviceUUID))
+                    // Incomplete manifest data - create placeholder Device to prevent null reference
+                    manifest.Device = new ManifestDevice
                     {
-                        // StreamDock format: map flat properties to Device object
-                        manifest.Device = new ManifestDevice
-                        {
-                            Model = deviceModel,
-                            UUID = deviceUUID,
-                            Hash = Tools.CreateMD5(deviceUUID)
-                        };
-                        Logger.Verbose($"StreamDock format detected - Device object created from flat properties");
-                    }
-                    else
-                    {
-                        // Incomplete manifest data - create placeholder Device to prevent null reference
-                        manifest.Device = new ManifestDevice
-                        {
-                            Model = "Unknown",
-                            UUID = Guid.NewGuid().ToString(),
-                            Hash = "UNKNOWN"
-                        };
-                        Logger.Warning($"Incomplete manifest '{manifest.ProfileName}' - missing Device info, using placeholder");
-                    }
+                        Model = "Unknown",
+                        UUID = Guid.NewGuid().ToString(),
+                        Hash = "UNKNOWN"
+                    };
+                    Logger.Warning($"Incomplete manifest '{manifest.ProfileName}' - missing Device info, using placeholder");
                 }
             }
             return manifest;
@@ -151,9 +166,36 @@ namespace ProfileManager.json
             return manifest;
         }
 
+        // Writes the manifest back to disk while preserving all original fields
+        // (Actions, Pages, pageuuid, AppIdentifier, etc.) that the ProfileManifest
+        // POCO does not model. Only PilotsDock's own fields
+        // (InstalledByPluginUUID / PreconfiguredName) are updated on the original JSON.
         public static void WriteManifest(string path, ProfileManifest manifest)
         {
-            File.WriteAllText(path, JsonSerializer.Serialize(manifest));
+            JsonNode root;
+            string original = null;
+            if (File.Exists(path) && (new FileInfo(path)).Length > 0)
+            {
+                original = File.ReadAllText(path);
+                root = JsonNode.Parse(original) ?? new JsonObject();
+            }
+            else
+            {
+                root = JsonSerializer.SerializeToNode(manifest, WriteOptions) ?? new JsonObject();
+            }
+
+            // Update only the fields PilotsDock manages.
+            if (manifest.InstalledByPluginUUID != null)
+                root["InstalledByPluginUUID"] = manifest.InstalledByPluginUUID;
+            else if (root["InstalledByPluginUUID"] != null)
+                root["InstalledByPluginUUID"] = null;
+
+            if (manifest.PreconfiguredName != null)
+                root["PreconfiguredName"] = manifest.PreconfiguredName;
+            else if (root["PreconfiguredName"] != null)
+                root["PreconfiguredName"] = null;
+
+            File.WriteAllText(path, root.ToJsonString(WriteOptions));
             manifest.IsChanged = false;
             Logger.Debug($"Manifest was saved: {manifest}");
         }

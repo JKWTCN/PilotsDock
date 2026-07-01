@@ -88,13 +88,44 @@ namespace ProfileManager
             }
         }
 
+        public void LoadManifestsOnly()
+        {
+            try
+            {
+                Logger.Debug("Controller is loading Profile Manifests only ...");
+
+                IsLoaded = false;
+                HasError = false;
+                CountMappingsUnmatched = 0;
+                LoadProfileManifests(false);
+                IsLoaded = !HasError;
+            }
+            catch (Exception ex)
+            {
+                HasError = true;
+                MessageBox.Show($"Exception '{ex.GetType()}' while loading Profiles!\r\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Logger.LogException(ex);
+            }
+        }
+
         protected void LoadProfileManifests(bool log = true)
         {
             ProfileManifests.Clear();
 
             var profilesDir = new DirectoryInfo(Parameters.SD_PROFILE_PATH);
+            if (!profilesDir.Exists)
+            {
+                Logger.Warning($"Profile Directory does not exist: {Parameters.SD_PROFILE_PATH}");
+                if (log)
+                    Logger.Information($"ProfileManifests loaded (Count {ProfileManifests.Count})");
+                return;
+            }
+
             string filename;
-            foreach (var directory in profilesDir.GetDirectories())
+            // StreamDock stores each profile as a top-level *.sdProfile directory
+            // containing its own manifest.json. Only scan those top-level profile
+            // directories (skip nested page-level sdProfile dirs inside profiles\).
+            foreach (var directory in profilesDir.GetDirectories($"*{Parameters.SD_PROFILE_EXTENSION}"))
             {
                 filename = $@"{directory.FullName}\{Parameters.SD_PROFILE_MANIFEST}";
                 if (File.Exists(filename) && (new FileInfo(filename)).Length > 0)
@@ -113,7 +144,7 @@ namespace ProfileManager
             string path = $@"{Parameters.PLUGIN_PROFILE_PATH}\{Parameters.PLUGIN_MAPPING_DEVICEINFO}";
             if (File.Exists(path) && (new FileInfo(path)).Length > 0)
             {
-                DeviceInfos = JsonSerializer.Deserialize<List<DeviceInfo>>(File.ReadAllText(path)); ;
+                DeviceInfos = JsonSerializer.Deserialize<List<DeviceInfo>>(File.ReadAllText(path)) ?? [];
                 if (log)
                     Logger.Information($"DeviceInfos loaded (Count {DeviceInfos.Count})");
             }
@@ -142,7 +173,7 @@ namespace ProfileManager
                 return;
             }
 
-            ProfileMappings = JsonSerializer.Deserialize<List<ProfileMapping>>(File.ReadAllText(path));
+            ProfileMappings = JsonSerializer.Deserialize<List<ProfileMapping>>(File.ReadAllText(path)) ?? [];
             if (log)
                 Logger.Information($"ProfileMappings loaded (Count {ProfileMappings.Count})");
         }
@@ -150,7 +181,7 @@ namespace ProfileManager
         protected void MapAndCheckData()
         {
             foreach (var deviceInfo in DeviceInfos)
-                foreach (var manifest in ProfileManifests.Where(m => m.Device != null && m.Device.Hash.Equals(deviceInfo.ID, StringComparison.InvariantCultureIgnoreCase)))
+                foreach (var manifest in ProfileManifests.Where(m => !string.IsNullOrEmpty(m.Device?.Hash) && string.Equals(m.Device.Hash, deviceInfo.ID, StringComparison.InvariantCultureIgnoreCase)))
                     manifest.SetDeviceInfo(deviceInfo);
 
             foreach (var mapping in ProfileMappings)

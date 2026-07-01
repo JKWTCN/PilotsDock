@@ -59,10 +59,12 @@ namespace PilotsDeck.Plugin
             return $"Mapping: Name {DeckName} | DeckID {DeckId} | Path {ProfileName}";
         }
 
-        public static readonly string STREAMDECK_PATH = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Elgato\StreamDeck";
+        // The plugin is launched by the deck software (VSD Craft / StreamDeck) with its working
+        // directory set to the plugin install folder, so resolve the Profiles path relative to the
+        // plugin binary rather than hard-coding a platform-specific AppData path.
+        public static readonly string PLUGIN_PATH = AppContext.BaseDirectory.TrimEnd('\\', '/');
         public static readonly string PLUGIN_MAPPING_FILE = "ProfileMappings.json";
         public static readonly string PLUGIN_UUID = AppConfiguration.PluginUUID;
-        public static readonly string PLUGIN_PATH = $@"{STREAMDECK_PATH}\Plugins\{PLUGIN_UUID}.sdPlugin";
         public static readonly string PLUGIN_PROFILE_FOLDER = "Profiles";
         public static readonly string PLUGIN_PROFILE_PATH = $@"{PLUGIN_PATH}\{PLUGIN_PROFILE_FOLDER}";
 

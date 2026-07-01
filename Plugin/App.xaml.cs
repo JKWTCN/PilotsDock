@@ -35,7 +35,11 @@ namespace PilotsDeck
 {
     public partial class App : Application
     {
-        public static readonly string PLUGIN_PATH = $@"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\Elgato\StreamDeck\Plugins\{AppConfiguration.PluginUUID}.sdPlugin";
+        // Resolve the plugin install folder from the binary location. The deck software
+        // (VSD Craft / StreamDeck) launches the plugin with its working directory set to
+        // the plugin folder, so AppContext.BaseDirectory points to the correct install path
+        // regardless of platform (HotSpot\StreamDock vs Elgato\StreamDeck).
+        public static readonly string PLUGIN_PATH = AppContext.BaseDirectory.TrimEnd('\\', '/');
 
         public static Dictionary<string, string> CommandLineArgs { get; private set; } = [];
         public static AppConfiguration Configuration { get; private set; } = null;

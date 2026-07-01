@@ -23,6 +23,7 @@ namespace ProfileManager
             public string FileName { get; set; } = filename;
             public string ProfileName { get; set; } = profilename;
             public bool HasOldProfile { get; set; } = false;
+            public string InstallFilePath { get { return $@"{Parameters.PLUGIN_PROFILE_PATH}\{FileName}"; } }
             public string InstallPath { get { return $"\"{Parameters.PLUGIN_PROFILE_PATH}\\{FileName}\""; } }
             public bool IsInstalled { get; set; } = false;
             public PackageClickResponse ClickResponse { get; set; } = PackageClickResponse.NotClicked;
@@ -247,15 +248,20 @@ namespace ProfileManager
 
             task.Message = $"Get {Parameters.SD_PROFILE_MANIFEST} for Profile";
             ZipArchiveEntry manifestEntry = null;
+            // A .SDProfile / .streamDeckProfile is a ZIP. The device-level manifest.json sits
+            // at the archive root (StreamDock); fall back to a nested .sdProfile/manifest.json.
+            ZipArchiveEntry nestedEntry = null;
             foreach (var entry in tempArchive.Entries)
             {
-                if (entry.FullName.Contains($".sdProfile/{Parameters.SD_PROFILE_MANIFEST}", StringComparison.InvariantCultureIgnoreCase)
-                    || entry.FullName.Contains($".sdProfile\\{Parameters.SD_PROFILE_MANIFEST}", StringComparison.InvariantCultureIgnoreCase))
+                if (entry.FullName.Equals(Parameters.SD_PROFILE_MANIFEST, StringComparison.InvariantCultureIgnoreCase))
                 {
                     manifestEntry = entry;
                     break;
                 }
+                if (nestedEntry == null && entry.FullName.Contains($".sdProfile/{Parameters.SD_PROFILE_MANIFEST}", StringComparison.InvariantCultureIgnoreCase))
+                    nestedEntry = entry;
             }
+            manifestEntry ??= nestedEntry;
             if (manifestEntry == null)
             {
                 Dispose();

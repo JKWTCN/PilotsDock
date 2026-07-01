@@ -43,6 +43,12 @@ namespace ProfileManager
             StringBuilder sb = new();
             try
             {
+                if (string.IsNullOrEmpty(input))
+                {
+                    Logger.Warning("MD5 hash requested for an empty input");
+                    return sb.ToString();
+                }
+
                 byte[] hash = MD5.HashData(Encoding.UTF8.GetBytes(input));
                 
                 for (int i = 0; i < hash.Length; i++)
