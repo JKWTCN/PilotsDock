@@ -295,10 +295,6 @@ namespace ProfileManager
                 if (CountProfiles > 0)
                 {
                     CopyValidFolderFiles(Parameters.PLUGIN_PROFILE_FOLDER, $"*{Parameters.SD_PROFILE_EXTENSION}", 0);
-                    if (Parameters.IsStreamDockMode)
-                    {
-                        CopyValidFolderFiles(Parameters.PLUGIN_PROFILE_FOLDER, $"*.streamDeckProfile", 0);
-                    }
                 }
 
                 if (CountImages > 0)
@@ -414,14 +410,7 @@ namespace ProfileManager
 
         protected static bool IsProfilePath(string filepath)
         {
-            if (Parameters.IsStreamDockMode)
-            {
-                return CheckPathBeginEnd(filepath, $"{Parameters.PLUGIN_PROFILE_FOLDER}/", Parameters.SD_PROFILE_EXTENSION) || CheckPathBeginEnd(filepath, $"{Parameters.PLUGIN_PROFILE_FOLDER}/", ".streamDeckProfile");
-            }
-            else
-            {
-                return CheckPathBeginEnd(filepath, $"{Parameters.PLUGIN_PROFILE_FOLDER}/", Parameters.SD_PROFILE_EXTENSION);
-            }
+            return CheckPathBeginEnd(filepath, $"{Parameters.PLUGIN_PROFILE_FOLDER}/", Parameters.SD_PROFILE_EXTENSION);
         }
 
         protected static bool IsImagePath(string filepath)

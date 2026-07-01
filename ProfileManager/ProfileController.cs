@@ -37,13 +37,8 @@ namespace ProfileManager
         {
             get
             {
-                if (Parameters.IsStreamDockMode)
-                {
-
-                    Process[] processes = Process.GetProcessesByName("VSD Craft");
-                    return processes.Length > 0;
-                }
-                return FuncStreamDeck.IsDeckOrPluginRunning();
+                Process[] processes = Process.GetProcessesByName("VSD Craft");
+                return processes.Length > 0;
             }
         }
 
@@ -307,10 +302,10 @@ namespace ProfileManager
             Logger.Debug("Swapping updated Manifests ...");
             try
             {
-                if (updatedNames.Count > 0 && FuncStreamDeck.IsDeckOrPluginRunning())
+                if (updatedNames.Count > 0 && AppsRunning)
                 {
                     Logger.Information($"Stopping {Parameters.PlatformSoftwareName} for profile swap...");
-                    var stopWorker = new WorkerStreamDeckStartStop<Config>(Config.Instance, DeckProcessOperation.KILL);
+                    var stopWorker = new WorkerStreamDockStartStop<Config>(Config.Instance, DeckProcessOperation.KILL);
                     await stopWorker.Run(System.Threading.CancellationToken.None);
                 }
 
@@ -396,7 +391,7 @@ namespace ProfileManager
                     task.SetState($"\r\n=> Completed! ({countChangedManifest} replaced)", TaskState.COMPLETED);
 
                 Logger.Information($"Starting {Parameters.PlatformSoftwareName} after profile swap...");
-                var startWorker = new WorkerStreamDeckStartStop<Config>(Config.Instance, DeckProcessOperation.START) { RefocusWindow = true, RefocusWindowTitle = MainWindow.AppTitle };
+                var startWorker = new WorkerStreamDockStartStop<Config>(Config.Instance, DeckProcessOperation.START) { RefocusWindow = true, RefocusWindowTitle = MainWindow.AppTitle };
                 await startWorker.Run(System.Threading.CancellationToken.None);
             }
             catch (Exception ex)

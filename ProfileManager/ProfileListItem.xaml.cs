@@ -239,7 +239,7 @@ namespace ProfileManager
         {
             if (!ViewModel.Manifest.DeleteFlag)
             {
-                var result = MessageBox.Show("This will delete the Profile from the StreamDeck and Filesystem (move to Trash)!\r\nContinue?", "Delete StreamDeck Profile", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+                var result = MessageBox.Show("This will delete the Profile from the StreamDock and Filesystem (move to Trash)!\r\nContinue?", "Delete StreamDock Profile", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
                 if (result == MessageBoxResult.Yes)
                     ViewModel.ToggleDeleteFlag();
             }

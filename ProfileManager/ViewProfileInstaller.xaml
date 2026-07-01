@@ -15,7 +15,7 @@
         </Grid.RowDefinitions>
 
         <!--NOTICE-->
-        <TextBlock Grid.Row="0" Name="LabelInstallerNotice" Visibility="Collapsed" FontSize="12" FontWeight="DemiBold" Margin="0,8,0,12" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="384" Text="Note: The Installation will only continue/finish after clicking all the Links and adding the Profiles to the StreamDeck Software."/>
+        <TextBlock Grid.Row="0" Name="LabelInstallerNotice" Visibility="Collapsed" FontSize="12" FontWeight="DemiBold" Margin="0,8,0,12" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="384" Text="Note: The Installation will only continue/finish after clicking all the Links and adding the Profiles to the StreamDock Software."/>
 
         <!--TASK STATUS-->
         <local:InstallerTaskPanel Grid.Row="1" x:Name="AreaTaskStatus" Orientation="Vertical" MinWidth="384" Margin="0,0,0,8" Visibility="Collapsed"/>
@@ -84,12 +84,12 @@
             <TreeView Grid.Row="7" Grid.Column="1" Name="TreeRemoveFiles" FontSize="12" Margin="6,8,4,4" BorderThickness="0"/>
 
             <TextBlock Grid.Row="8" Grid.Column="0" Name="LabelRemoveOld" FontSize="12" FontWeight="DemiBold" Margin="4,8,4,4"
-                       ToolTip="If you still have the old Profiles in your StreamDeck Software, the new Profiles will be added as a Copy by the Software.&#x0a;The Installer will delete the old Profile (kept in Trash), rename the new Profile and will copy the existing Mapping over.&#x0a;The Matching is done by the Profile's Name and the Installer will only change/remove anything when there is a 1:1 Match.">
+                       ToolTip="If you still have the old Profiles in your StreamDock Software, the new Profiles will be added as a Copy by the Software.&#x0a;The Installer will delete the old Profile (kept in Trash), rename the new Profile and will copy the existing Mapping over.&#x0a;The Matching is done by the Profile's Name and the Installer will only change/remove anything when there is a 1:1 Match.">
                 Remove old Profiles:
             </TextBlock>
             <CheckBox Grid.Row="8" Grid.Column="1" Name="CheckboxRemoveOld" Click="CheckboxRemoveOld_Click" FontSize="12" Margin="10,9,4,4"
-                      ToolTip="If you still have the old Profiles in your StreamDeck Software, the new Profiles will be added as a Copy by the Software.&#x0a;The Installer will delete the old Profile (kept in Trash), rename the new Profile and will copy the existing Mapping over.&#x0a;The Matching is done by the Profile's Name and the Installer will only change/remove anything when there is a 1:1 Match.">
-                Remove old Profiles from StreamDeck for updated Profiles
+                      ToolTip="If you still have the old Profiles in your StreamDock Software, the new Profiles will be added as a Copy by the Software.&#x0a;The Installer will delete the old Profile (kept in Trash), rename the new Profile and will copy the existing Mapping over.&#x0a;The Matching is done by the Profile's Name and the Installer will only change/remove anything when there is a 1:1 Match.">
+                Remove old Profiles from StreamDock for updated Profiles
             </CheckBox>
 
             <TextBlock Grid.Row="9" Grid.Column="0" Name="LabelKeepContents" FontSize="12" FontWeight="DemiBold" Margin="4,8,4,4"
@@ -101,7 +101,7 @@
                 Keep extracted Files after Installation is finished
             </CheckBox>
 
-            <TextBlock Grid.Row="10" Grid.Column="1" FontSize="12" FontWeight="DemiBold" Margin="4,20,4,4" TextWrapping="Wrap">Note: The StreamDeck Software will be automatically started and stopped as needed!</TextBlock>
+            <TextBlock Grid.Row="10" Grid.Column="1" FontSize="12" FontWeight="DemiBold" Margin="4,20,4,4" TextWrapping="Wrap">Note: The StreamDock Software will be automatically started and stopped as needed!</TextBlock>
         </Grid>
 
 

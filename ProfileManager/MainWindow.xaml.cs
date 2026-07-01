@@ -31,7 +31,7 @@ namespace ProfileManager
                 Instance = this;
                 InitializeComponent();
                 BrushDefault = ButtonProfileInstaller.BorderBrush;
-                FuncStreamDeck.PluginBinary = Config.PluginBinary;
+                FuncStreamDock.PluginBinary = Config.PluginBinary;
 
                 Title = $"{Title} ({VersionTools.GetEntryAssemblyVersion(3)}-{VersionTools.GetEntryAssemblyTimestamp()})";
                 AppTitle = Title;
@@ -84,7 +84,7 @@ namespace ProfileManager
             if (ProfileController.AppsRunning)
             {
                 Logger.Error($"Profile Mapper requested while Apps still running!");
-                MessageBox.Show("The StreamDeck Software is still running:\r\nCan not clean Profile Flags while StreamDeck Software is active.", "StreamDeck Running", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("The StreamDock Software is still running:\r\nCan not clean Profile Flags while StreamDock Software is active.", "StreamDock Running", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -178,36 +178,21 @@ namespace ProfileManager
                 if (ProfileController.AppsRunning)
                 {
                     Logger.Debug($"Profile Mapper requested while Apps still running!");
-                    if (!Parameters.IsStreamDockMode)
+                    var result = MessageBox.Show("Can not edit Profiles while StreamDock is running:\r\nKill StreamDock Software now?", "StreamDock Running", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    if (result == MessageBoxResult.Yes)
                     {
-                        var result = MessageBox.Show("Can not edit Profiles while StreamDeck is running:\r\nKill StreamDeck Software now?", "StreamDeck Running", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                        if (result == MessageBoxResult.Yes)
+                        Logger.Debug($"Stopping StreamDock ...");
+                        Process[] processes = Process.GetProcessesByName("VSD Craft");
+                        foreach (Process p in processes)
                         {
-                            Logger.Debug($"Stopping StreamDeck ...");
-                            await StartStopStreamDeck(DeckProcessOperation.STOP);
-                        }
-                        else
-                            Logger.Warning($"Continued with StreamDeck running");
-                    }
-                    else
-                    {
-                        var result = MessageBox.Show("Can not edit Profiles while StreamDock is running:\r\nKill StreamDeck Software now?", "StreamDock Running", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                        if (result == MessageBoxResult.Yes)
-                        {
-                            Logger.Debug($"Stopping StreamDock ...");
-                            Process[] processes = Process.GetProcessesByName("VSD Craft");
-                            foreach (Process p in processes)
+                            if (!p.CloseMainWindow())
                             {
-                                if (!p.CloseMainWindow())
-                                {
-                                    p.Kill();
-                                }
+                                p.Kill();
                             }
                         }
-                        else
-                            Logger.Warning($"Continued with StreamDock running");
                     }
-
+                    else
+                        Logger.Warning($"Continued with StreamDock running");
                 }
 
                 ButtonEnable(ButtonProfileInstaller);
@@ -240,7 +225,7 @@ namespace ProfileManager
             ContentArea.Content = tempTaskPanel;
             tempTaskPanel.Activate();
 
-            var worker = new WorkerStreamDeckStartStop<Config>(Config.Instance, operation);
+            var worker = new WorkerStreamDockStartStop<Config>(Config.Instance, operation);
             if (operation == DeckProcessOperation.START)
             {
                 worker.RefocusWindow = true;
@@ -260,8 +245,8 @@ namespace ProfileManager
         {
             if (StoppedStreamDeck)
             {
-                Logger.Information($"Starting StreamDeck Software");
-                (new FuncStreamDeck()).StartSoftware();
+                Logger.Information($"Starting StreamDock Software");
+                (new FuncStreamDock()).StartSoftware();
             }
 
             if (ContentArea.Content is ViewProfileMapper)

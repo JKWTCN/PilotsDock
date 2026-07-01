@@ -89,7 +89,7 @@
             1. Install Profiles and their associated Files (Images, Scripts) from 'PilotsDeck Profile Package' (.ppp) Archive-Files.<LineBreak/><LineBreak/>
             
             2. Configuring installed Profiles to switch automatically based on the current Aircraft or Simulator (with some basic Profile Management like changing Names or delete Profiles).<LineBreak/>
-            Use the 'Profile Switcher' Action on your StreamDeck to get the Aircraft String of the current Aircraft.<LineBreak/><LineBreak/>
+            Use the 'Profile Switcher' Action on your StreamDock to get the Aircraft String of the current Aircraft.<LineBreak/><LineBreak/>
             
             3. Create a Profile Package File for Distribution.
         </TextBlock>

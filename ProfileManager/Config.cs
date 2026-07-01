@@ -1,5 +1,4 @@
 ﻿using CFIT.AppLogger;
-using CFIT.Installer.LibFunc;
 using CFIT.Installer.Product;
 using Serilog;
 using System;
@@ -32,24 +31,12 @@ namespace ProfileManager
         private static string GetPluginPath()
         {
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string streamDockPath = Path.Combine(appDataPath, "HotSpot", "StreamDock", "Plugins", Parameters.PLUGIN_FOLDER);
+            if (Directory.Exists(streamDockPath))
+                return streamDockPath;
 
-            if (Parameters.IsStreamDockMode)
-            {
-                // HotSpot StreamDock mode
-                string hotSpotPath = Path.Combine(appDataPath, "HotSpot", "StreamDock", "plugins", "com.extension.pilotsdeck.sdPlugin");
-                if (Directory.Exists(hotSpotPath))
-                    return hotSpotPath;
-
-                Logger.Warning($"HotSpot path not found: {hotSpotPath}");
-            }
-
-            // Default StreamDeck path (or fallback)
-            string streamDeckPath = Path.Combine(FuncStreamDeck.DeckPluginPath, "com.extension.pilotsdeck.sdPlugin");
-            if (Directory.Exists(streamDeckPath))
-                return streamDeckPath;
-
-            Logger.Warning($"StreamDeck path not found: {streamDeckPath}");
-            return Parameters.PLUGIN_PATH; // Return from Parameters as last resort
+            Logger.Warning($"StreamDock path not found: {streamDockPath}");
+            return Parameters.PLUGIN_PATH;
         }
     }
 }
