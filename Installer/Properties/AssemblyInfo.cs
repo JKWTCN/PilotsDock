@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // Allgemeine Informationen über eine Assembly werden über die folgenden 
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die einer Assembly zugeordnet sind.
-[assembly: AssemblyTitle("PilotsDeck Installer v0.9.2.0 (2026.06.25.1222)")]
-[assembly: AssemblyDescription("Installer Application for PilotsDeck")]
+[assembly: AssemblyTitle("PilotsDock Installer v (2026.06.25.1222)")]
+[assembly: AssemblyDescription("Installer Application for PilotsDock")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Fragtality")]
-[assembly: AssemblyProduct("PilotsDeck Installer")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("PilotsDock Installer")]
 [assembly: AssemblyCopyright("Copyright © 2026")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -28,5 +28,5 @@ using System.Runtime.InteropServices;
 //      Buildnummer
 //      Revision
 //
-[assembly: AssemblyVersion("0.9.2.0")]
-[assembly: AssemblyFileVersion("0.9.2.0")]
+[assembly: AssemblyVersion("")]
+[assembly: AssemblyFileVersion("")]
