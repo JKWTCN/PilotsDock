@@ -360,9 +360,9 @@ namespace PilotsDeck
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Add("User-Agent", ".NET Foundation Repository Reporter");
 
-                string commit = await ProductDefinitionBase.GetLatestCommit(client, "Fragtality", "PilotsDeck", "Installer/Payload/version.json");
+                string commit = await ProductDefinitionBase.GetLatestCommit(client, "JKWTCN", "PilotsDock", "Installer/Payload/version.json");
                 Logger.Debug($"Latest commit: {commit}");
-                string url = ProductDefinitionBase.GetUrlCommit("Installer/Payload/version.json", "Fragtality", "PilotsDeck", commit);
+                string url = ProductDefinitionBase.GetUrlCommit("Installer/Payload/version.json", "JKWTCN", "PilotsDock", commit);
                 Logger.Verbose($"Fetch version File from: {url}");
 
                 string json = await client.GetStringAsync(url);

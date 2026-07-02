@@ -47,7 +47,7 @@ namespace PilotsDeck.UI.DeveloperUI
 
                     Hyperlink hyperlink = new(run)
                     {
-                        NavigateUri = new Uri("https://github.com/Fragtality/PilotsDeck/releases/latest")
+                        NavigateUri = new Uri("https://github.com/JKWTCN/PilotsDock/releases/latest")
                     };
                     LabelVersionCheck.Inlines.Add(hyperlink);
                     LabelVersionCheck.Inlines.Add(" available!");
