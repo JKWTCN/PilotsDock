@@ -22,6 +22,14 @@ namespace ProfileManager
 
         private static TransferSettings SettingClipboard = null;
 
+        protected static List<KeyValuePair<int, string>> BuildSimulatorSelections()
+        {
+            List<KeyValuePair<int, string>> result = [];
+            foreach (var selection in json.ProfileMapping.SimulatorSelections)
+                result.Add(new(selection.Key, selection.Value == "NOT SET" ? Localization.Translate("NOT SET") : selection.Value));
+            return result;
+        }
+
         protected Action ActionUpdateAll;
 
         public ProfileViewModel ViewModel { get; protected set; }
@@ -38,8 +46,9 @@ namespace ProfileManager
         public ProfileListItem(ProfileManifest manifest, Action refreshAll)
         {
             InitializeComponent();
+            Localization.Apply(this);
 
-            SelectDefaultSimulator.ItemsSource = new Collection<KeyValuePair<int, string>>(ProfileMapping.SimulatorSelections);
+            SelectDefaultSimulator.ItemsSource = new Collection<KeyValuePair<int, string>>(BuildSimulatorSelections());
 
             BrushDefaultBackground = ButtonCopyPasteSettings.Background;
 
@@ -239,7 +248,7 @@ namespace ProfileManager
         {
             if (!ViewModel.Manifest.DeleteFlag)
             {
-                var result = MessageBox.Show("This will delete the Profile from the StreamDock and Filesystem (move to Trash)!\r\nContinue?", "Delete StreamDock Profile", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+                var result = MessageBox.Show(Localization.Translate("This will delete the Profile from the StreamDock and Filesystem (move to Trash)!\r\nContinue?"), Localization.Translate("Delete StreamDock Profile"), MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
                 if (result == MessageBoxResult.Yes)
                     ViewModel.ToggleDeleteFlag();
             }

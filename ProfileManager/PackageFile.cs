@@ -64,7 +64,7 @@ namespace ProfileManager
         public bool CheckFile()
         {
             Logger.Debug($"Setting File to '{FullPath}'");
-            var task = TaskStore.Add("Check File", $"Query basic File Information for '{FullPath}'");
+            var task = TaskStore.Add(Localization.Translate("Check File"), Localization.Translate("Query basic File Information for '{0}'", FullPath));
 
             try
             {
@@ -118,7 +118,7 @@ namespace ProfileManager
         public bool LoadPackageInfo()
         {
             Logger.Debug($"Loading Package Info ...");
-            var task = TaskStore.Add("Load Package Information", "Open ZIP Archive");
+            var task = TaskStore.Add(Localization.Translate("Load Package Information"), Localization.Translate("Open ZIP Archive"));
 
             try
             {
@@ -295,7 +295,7 @@ namespace ProfileManager
                 if (HasStreamDeckProfiles)
                     KeepPackageContents = true;
 
-                var task = TaskStore.Add("Install Package Files", $"Extract Archive to Work-Directory: ({ProfileWorkPath})");
+                var task = TaskStore.Add(Localization.Translate("Install Package Files"), Localization.Translate("Extract Archive to Work-Directory: ({0})", ProfileWorkPath));
                 task.DisplayCompleted = false;
 
                 if (Directory.Exists(ProfileWorkPath))

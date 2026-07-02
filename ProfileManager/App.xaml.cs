@@ -17,13 +17,13 @@ namespace ProfileManager
 
             if (Process.GetProcessesByName("ProfileManager").Length > 1)
             {
-                MessageBox.Show("ProfileManager is already running!", "Critical Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Localization.Translate("ProfileManager is already running!"), Localization.Translate("Critical Error"), MessageBoxButton.OK, MessageBoxImage.Error);
                 Application.Current.Shutdown();
                 return;
             }
             if (!Directory.Exists(Parameters.PLUGIN_PATH))
             {
-                MessageBox.Show($"Could not find the plugin in the {Parameters.PlatformName} plugin directory.\n\nPath: {Parameters.PLUGIN_PATH}", "Plugin Not Found", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Localization.Translate("Could not find the plugin in the {0} plugin directory.\n\nPath: {1}", Parameters.PlatformName, Parameters.PLUGIN_PATH), Localization.Translate("Plugin Not Found"), MessageBoxButton.OK, MessageBoxImage.Error);
                 Application.Current.Shutdown();
                 return;
             }

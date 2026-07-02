@@ -66,7 +66,7 @@ namespace ProfileManager
 
         public void CheckExistingProfiles()
         {
-            var checkTask = TaskStore.Add($"Check existing Profiles", "");
+            var checkTask = TaskStore.Add(Localization.Translate("Check existing Profiles"), "");
             checkTask.DisplayCompleted = false;
             ProfileController.LoadManifestsOnly();
             foreach (var profile in PackageFile.PackagedProfiles)
@@ -134,8 +134,8 @@ namespace ProfileManager
                 foreach (var profile in PackageFile.PackagedProfiles)
                 {
                     Logger.Debug($"Adding Task for '{profile.FileName}'");
-                    var task = TaskStore.Add($"Add Profile '{profile.ProfileName}' to {Parameters.PlatformName}");
-                    task.AddMessage($"Click the Link to import the Profile into {Parameters.PlatformName} (or click Ignore):", true, false, false, FontWeights.DemiBold);
+                    var task = TaskStore.Add(Localization.Translate("Add Profile '{0}' to {1}", profile.ProfileName, Parameters.PlatformName));
+                    task.AddMessage(Localization.Translate("Click the Link to import the Profile into {0} (or click Ignore):", Parameters.PlatformName), true, false, false, FontWeights.DemiBold);
                     task.State = TaskState.WAITING;
                     task.DisplayCompleted = true;
                     var link = task.AddLink(profile.FileName, () => OpenProfileFile(profile, task));
@@ -145,7 +145,7 @@ namespace ProfileManager
                     link.LinkFontSize = 12;
                     link.StateOnLinkClicked = TaskState.ACTIVE;
                     link.ClickedCallback = () => { profile.ClickResponse = PackageClickResponse.Clicked; Logger.Debug($"Clicked Install for on '{profile.FileName}'"); };
-                    link = task.AddLink("Ignore", null);
+                    link = task.AddLink(Localization.Translate("Ignore"), null);
                     link.DisableLinkOnClick = disableLinks;
                     link.LinkStyleBold = true;
                     link.LinkFontSize = 12;
@@ -167,16 +167,16 @@ namespace ProfileManager
 
         protected void ShowStreamDeckConversionNotice()
         {
-            var task = TaskStore.Add("StreamDeck Profile Conversion Required");
+            var task = TaskStore.Add(Localization.Translate("StreamDeck Profile Conversion Required"));
             task.DisplayCompleted = true;
-            task.AddMessage($"This package contains StreamDeck {Parameters.STREAMDECK_PROFILE_EXTENSION} files. Please use this plugin to convert the scene for {Parameters.PlatformName}:", true, false, false, FontWeights.DemiBold);
+            task.AddMessage(Localization.Translate("This package contains StreamDeck {0} files. Please use this plugin to convert the scene for {1}:", Parameters.STREAMDECK_PROFILE_EXTENSION, Parameters.PlatformName), true, false, false, FontWeights.DemiBold);
 
             var link = task.AddLink(Parameters.STREAMDECK_CONVERSION_PLUGIN_URL, OpenStreamDeckConversionPlugin);
             link.LinkStyleBold = true;
             link.LinkFontSize = 12;
 
-            task.AddMessage($"The extracted profile folder has been opened:\r\n{PackageFile.ProfileFolderPath}", false, false, false);
-            task.SetSuccess("StreamDeck profiles extracted for conversion.");
+            task.AddMessage(Localization.Translate("The extracted profile folder has been opened:\r\n{0}", PackageFile.ProfileFolderPath), false, false, false);
+            task.SetSuccess(Localization.Translate("StreamDeck profiles extracted for conversion."));
             task.IsCompleted = true;
         }
 
@@ -247,7 +247,7 @@ namespace ProfileManager
 
         protected async Task<bool> CheckProfilesInstalled()
         {
-            var task = TaskStore.Add($"Install {PackageFile.PackagedProfiles.Count} Profiles to {Parameters.PlatformName}", "Wait for all Profiles to be clicked ...");
+            var task = TaskStore.Add(Localization.Translate("Install {0} Profiles to {1}", PackageFile.PackagedProfiles.Count, Parameters.PlatformName), Localization.Translate("Wait for all Profiles to be clicked ..."));
             task.DisplayCompleted = false;
             task.State = TaskState.WAITING;
 
@@ -282,7 +282,7 @@ namespace ProfileManager
                 }
 
                 CompleteTasks(PackageFile.PackagedProfiles.Where(p => !p.IsLinkDisabled));
-                task.SetSuccess("All Profiles installed (or ignored)!");
+                task.SetSuccess(Localization.Translate("All Profiles installed (or ignored)!"));
                 task.IsCompleted = true;
             }
             catch (Exception ex)
@@ -311,7 +311,7 @@ namespace ProfileManager
             }
             else
             {
-                task.SetError($"Unable to read Profile Data from {Parameters.PlatformSoftwareName}!");
+                task.SetError(Localization.Translate("Unable to read Profile Data from {0}!", Parameters.PlatformSoftwareName));
                 return false;
             }
 

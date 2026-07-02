@@ -23,6 +23,7 @@ namespace ProfileManager
         public ViewProfileInstaller()
         {
             InitializeComponent();
+            Localization.Apply(this);
 
             InstallWorker = new();
 
@@ -106,7 +107,7 @@ namespace ProfileManager
             AreaPackageInfo.Visibility = Visibility.Visible;
             AreaButtons.Visibility = Visibility.Visible;
 
-            SetButtonState(InstallWorker.IsValid, !InstallWorker.IsValid, false, "Install", "box-arrow-in-right", "Start Installation!");
+            SetButtonState(InstallWorker.IsValid, !InstallWorker.IsValid, false, Localization.Translate("Install"), "box-arrow-in-right", Localization.Translate("Start Installation!"));
             ActionButtonConfirmation = v => v.SetStateInstallingPackage();
 
             TimerClearTasks.Start();
@@ -151,7 +152,7 @@ namespace ProfileManager
             if (InstallWorker.IsInstalled)
             {
                 ActionButtonConfirmation = v => CloseInstaller(v);
-                SetButtonState(true, false, true, "Close", "check-square", "Close this View");
+                SetButtonState(true, false, true, Localization.Translate("Close"), "check-square", Localization.Translate("Close this View"));
             }
             else
             {
@@ -218,19 +219,19 @@ namespace ProfileManager
                 foreach (var profile in PackageFile.PackagedProfiles)
                 {
                     if (profile.HasOldProfile)
-                        displayList.Add($"Update: {profile.FileName}");
+                        displayList.Add(Localization.Translate("Update: {0}", profile.FileName));
                     else
-                        displayList.Add($"New: {profile.FileName}");
+                        displayList.Add(Localization.Translate("New: {0}", profile.FileName));
                 }
-                AddTreeItems($"{PackageFile.CountProfiles} Profiles", displayList, null, true);
-                AddTreeItems($"{PackageFile.CountStreamDeckProfiles} StreamDeck Profiles (conversion required)", PackageFile.FilesStreamDeckProfiles, new SolidColorBrush(Colors.Orange), true);
-                AddTreeItems($"{PackageFile.CountImages} Images", PackageFile.FilesImages);
-                AddTreeItems($"{PackageFile.CountScripts} Scripts", PackageFile.FilesScripts);
-                AddTreeItems($"{PackageFile.CountExtras} Extras", PackageFile.FilesExtras);
-                AddTreeItems($"{PackageFile.FilesUnknown.Count} Unknown", PackageFile.FilesUnknown, new SolidColorBrush(Colors.Orange));
+                AddTreeItems(Localization.Translate("{0} Profiles", PackageFile.CountProfiles), displayList, null, true);
+                AddTreeItems(Localization.Translate("{0} StreamDeck Profiles (conversion required)", PackageFile.CountStreamDeckProfiles), PackageFile.FilesStreamDeckProfiles, new SolidColorBrush(Colors.Orange), true);
+                AddTreeItems(Localization.Translate("{0} Images", PackageFile.CountImages), PackageFile.FilesImages);
+                AddTreeItems(Localization.Translate("{0} Scripts", PackageFile.CountScripts), PackageFile.FilesScripts);
+                AddTreeItems(Localization.Translate("{0} Extras", PackageFile.CountExtras), PackageFile.FilesExtras);
+                AddTreeItems(Localization.Translate("{0} Unknown", PackageFile.FilesUnknown.Count), PackageFile.FilesUnknown, new SolidColorBrush(Colors.Orange));
                 if (PackageFile.Manifest.RemoveFiles.Count > 0)
                 {
-                    AddTreeItems($"{PackageFile.Manifest.RemoveFiles.Count} Remove", PackageFile.Manifest.RemoveFiles, new SolidColorBrush(Colors.Orange), true, TreeRemoveFiles);
+                    AddTreeItems(Localization.Translate("{0} Remove", PackageFile.Manifest.RemoveFiles.Count), PackageFile.Manifest.RemoveFiles, new SolidColorBrush(Colors.Orange), true, TreeRemoveFiles);
                     LabelRemoveFiles.Visibility = Visibility.Visible;
                     TreeRemoveFiles.Visibility = Visibility.Visible;
                 }
@@ -262,8 +263,8 @@ namespace ProfileManager
                 {
                     CheckboxKeepContents.IsChecked = true;
                     CheckboxKeepContents.IsEnabled = false;
-                    LabelKeepContents.ToolTip = "StreamDeck profiles must stay extracted so they can be converted.";
-                    CheckboxKeepContents.ToolTip = "StreamDeck profiles must stay extracted so they can be converted.";
+                    LabelKeepContents.ToolTip = Localization.Translate("StreamDock profiles must stay extracted so they can be converted.");
+                    CheckboxKeepContents.ToolTip = Localization.Translate("StreamDeck profiles must stay extracted so they can be converted.");
                 }
             }
             catch (Exception ex)
@@ -303,7 +304,7 @@ namespace ProfileManager
             catch (Exception ex)
             {
                 Logger.LogException(ex);
-                MessageBox.Show($"{ex.GetType()} - {ex.Message}", "Error loading URL", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{ex.GetType()} - {ex.Message}", Localization.Translate("Error loading URL"), MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -338,8 +339,8 @@ namespace ProfileManager
 
                 OpenFileDialog openFileDialog = new()
                 {
-                    Title = "Open Profile Package ...",
-                    Filter = $"{Parameters.PACKAGE_EXTENSION_NAME} (*{Parameters.PACKAGE_EXTENSION})|*{Parameters.PACKAGE_EXTENSION}|Zip File (*.zip)|*.zip|All files (*.*)|*.*"
+                    Title = Localization.Translate("Open Profile Package ..."),
+                    Filter = Localization.Translate("{0} (*{1})|*{1}|Zip File (*.zip)|*.zip|All files (*.*)|*.*", Parameters.PACKAGE_EXTENSION_NAME, Parameters.PACKAGE_EXTENSION)
                 };
 
                 if (openFileDialog.ShowDialog() == true)

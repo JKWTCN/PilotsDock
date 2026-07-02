@@ -150,7 +150,7 @@ namespace ProfileManager
             }
             else
             {
-                MessageBox.Show($"The File '{Parameters.PLUGIN_PROFILE_FOLDER}\\{Parameters.PLUGIN_MAPPING_DEVICEINFO}' does not exist or is empty!\r\nStart/Stop the {Parameters.PlatformSoftwareName} and try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Localization.Translate($"The File '{Parameters.PLUGIN_PROFILE_FOLDER}\\{Parameters.PLUGIN_MAPPING_DEVICEINFO}' does not exist or is empty!\r\nStart/Stop the {Parameters.PlatformSoftwareName} and try again."), Localization.Translate("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
                 Logger.Error($"The File '{Parameters.PLUGIN_MAPPING_DEVICEINFO}' does not exist or is empty! ({path})");
                 HasError = true;
             }
@@ -340,7 +340,7 @@ namespace ProfileManager
                     await stopWorker.Run(System.Threading.CancellationToken.None);
                 }
 
-                var task = TaskStore.Add($"Swap Profiles");
+                var task = TaskStore.Add(Localization.Translate("Swap Profiles"));
                 if (updatedNames.Count == 0)
                 {
                     task.Message = "Skip Profile Swap - no updated Profiles!";

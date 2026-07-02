@@ -30,6 +30,7 @@ namespace ProfileManager
             {
                 Instance = this;
                 InitializeComponent();
+                Localization.Apply(this);
                 BrushDefault = ButtonProfileInstaller.BorderBrush;
                 FuncStreamDock.PluginBinary = Config.PluginBinary;
 
@@ -84,7 +85,7 @@ namespace ProfileManager
             if (ProfileController.AppsRunning)
             {
                 Logger.Error($"Profile Mapper requested while Apps still running!");
-                MessageBox.Show("The StreamDock Software is still running:\r\nCan not clean Profile Flags while StreamDock Software is active.", "StreamDock Running", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(Localization.Translate("The StreamDock Software is still running:\r\nCan not clean Profile Flags while StreamDock Software is active."), Localization.Translate("StreamDock Running"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -139,7 +140,7 @@ namespace ProfileManager
                 if (ContentArea.Content is ViewProfileMapper && (ContentArea.Content as ViewProfileMapper).ProfileController.HasChanges && (ContentArea.Content as ViewProfileMapper).IsSaveStateValid())
                 {
                     Logger.Warning($"Close requested with unsaved Changes");
-                    var result = MessageBox.Show("There are unsaved Changes to your Profiles!\r\nSave before closing?", "Unsaved Changes", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    var result = MessageBox.Show(Localization.Translate("There are unsaved Changes to your Profiles!\r\nSave before closing?"), Localization.Translate("Unsaved Changes"), MessageBoxButton.YesNo, MessageBoxImage.Warning);
                     if (result == MessageBoxResult.Yes)
                         (ContentArea.Content as ViewProfileMapper).ProfileController.SaveChanges();
                 }
@@ -168,7 +169,7 @@ namespace ProfileManager
                 if (ContentArea.Content is ViewProfileInstaller && (ContentArea.Content as ViewProfileInstaller).IsPackageActive)
                 {
                     Logger.Warning($"Profile Mapper requested while Profile Installation in Progress!");
-                    var result = MessageBox.Show("A Profile Package is currently opened for Installation!\r\nCancel Installation?", "Profile Package Loaded", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    var result = MessageBox.Show(Localization.Translate("A Profile Package is currently opened for Installation!\r\nCancel Installation?"), Localization.Translate("Profile Package Loaded"), MessageBoxButton.YesNo, MessageBoxImage.Warning);
                     if (result == MessageBoxResult.No)
                         return;
                     else
@@ -178,7 +179,7 @@ namespace ProfileManager
                 if (ProfileController.AppsRunning)
                 {
                     Logger.Debug($"Profile Mapper requested while Apps still running!");
-                    var result = MessageBox.Show("Can not edit Profiles while StreamDock is running:\r\nKill StreamDock Software now?", "StreamDock Running", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    var result = MessageBox.Show(Localization.Translate("Can not edit Profiles while StreamDock is running:\r\nKill StreamDock Software now?"), Localization.Translate("StreamDock Running"), MessageBoxButton.YesNo, MessageBoxImage.Warning);
                     if (result == MessageBoxResult.Yes)
                     {
                         Logger.Debug($"Stopping StreamDock ...");

@@ -23,10 +23,19 @@ namespace ProfileManager
         public class ProfileFilter(Filter index, string name)
         {
             public Filter Index { get; set; } = index;
-            public string Name { get; set; } = $"{name} Profiles";
+            public string Name { get; set; } = name;
         }
 
-        public static readonly List<ProfileFilter> profileFilters = [ new(Filter.ALL, "All"), new(Filter.MAPPED, "Mapped"), new(Filter.UNMAPPED, "Unmapped"), new(Filter.CHANGED, "Changed")  ];
+        protected static List<ProfileFilter> BuildProfileFilters()
+        {
+            return
+            [
+                new(Filter.ALL, Localization.Translate("All Profiles")),
+                new(Filter.MAPPED, Localization.Translate("Mapped Profiles")),
+                new(Filter.UNMAPPED, Localization.Translate("Unmapped Profiles")),
+                new(Filter.CHANGED, Localization.Translate("Changed Profiles"))
+            ];
+        }
         protected bool StartUpCompleted { get; set; } = false;
 
         public ProfileController ProfileController { get; protected set; } = new();
@@ -48,9 +57,10 @@ namespace ProfileManager
             try
             { 
                 InitializeComponent();
+                Localization.Apply(this);
                 BrushDefault = BtnProfileSave.BorderBrush;
 
-                SelectProfileFilter.ItemsSource = new ObservableCollection<ProfileFilter>(profileFilters);
+                SelectProfileFilter.ItemsSource = new ObservableCollection<ProfileFilter>(BuildProfileFilters());
                 SelectProfileFilter.SelectedValue = Filter.ALL;
 
                 LoadProfileData();
@@ -105,7 +115,7 @@ namespace ProfileManager
                     foreach (var manifest in ProfileController.ProfileManifests)
                         ProfileListItems.Add(new ProfileListItem(manifest, UpdateAllViews));
 
-                    List<string> deviceFilters = ["All Decks"];
+                    List<string> deviceFilters = [Localization.Translate("All Decks")];
                     deviceFilters.AddRange(ProfileController.DeviceInfos.Select(d => d.Name));
                     SelectDeckFilter.ItemsSource = new ObservableCollection<string>(deviceFilters);
                     SelectDeckFilter.SelectedIndex = 0;
@@ -325,7 +335,7 @@ namespace ProfileManager
             if (ProfileController.HasChanges)
             {
                 Logger.Warning($"Refresh clicked with unsaved Changes");
-                var result = MessageBox.Show("There are unsaved Changes to your Profiles!\r\nContinue with Refresh?", "Unsaved Changes", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                var result = MessageBox.Show(Localization.Translate("There are unsaved Changes to your Profiles!\r\nContinue with Refresh?"), Localization.Translate("Unsaved Changes"), MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (result == MessageBoxResult.No)
                     doLoad = false;
             }
@@ -347,7 +357,7 @@ namespace ProfileManager
             if (IsSaveStateValid())
             {
                 Logger.Warning($"Close requested with unsaved Changes");
-                var result = MessageBox.Show("There are unsaved Changes to your Profiles!\r\nSave before closing?", "Unsaved Changes", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                var result = MessageBox.Show(Localization.Translate("There are unsaved Changes to your Profiles!\r\nSave before closing?"), Localization.Translate("Unsaved Changes"), MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (result == MessageBoxResult.Yes)
                     ProfileController.SaveChanges();
             }

@@ -16,6 +16,7 @@ namespace ProfileManager
         public ViewCreatePackage()
         {
             InitializeComponent();
+            Localization.Apply(this);
             GridOpenDirectory.Visibility = Visibility.Visible;
             GridPackageEditor.Visibility = Visibility.Collapsed;
 
@@ -72,8 +73,8 @@ namespace ProfileManager
         {
             if (PackageController.CheckVersionExists())
             {
-                if (MessageBox.Show($"A Package File for Version {ModelManifest.VersionPackage} already exists!\r\nAre you sure you want to override the existing Package?",
-                                    "Package File already exists",
+                if (MessageBox.Show(Localization.Translate("A Package File for Version {0} already exists!\r\nAre you sure you want to override the existing Package?", ModelManifest.VersionPackage),
+                                    Localization.Translate("Package File already exists"),
                                     MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No)
                     == MessageBoxResult.Yes)
                 PackageController.CreatePackage();
