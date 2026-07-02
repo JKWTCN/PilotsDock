@@ -1,6 +1,7 @@
 ﻿using CFIT.Installer.Product;
 using CFIT.Installer.UI.Behavior;
 using CFIT.Installer.UI.Config;
+using Localization = CFIT.Installer.UI.Localization;
 using System.Windows;
 
 namespace Installer
@@ -11,14 +12,14 @@ namespace Installer
 
         public override void CreateConfigItems()
         {
-            ConfigItemHelper.CreateCheckboxDesktopLink(Config, ConfigBase.OptionDesktopLink, Items, $"Create Link for {Config.ProfileManagerName} on Desktop");
+            ConfigItemHelper.CreateCheckboxDesktopLink(Config, ConfigBase.OptionDesktopLink, Items, Localization.Translate("Create Link for {0} on Desktop", Config.ProfileManagerName));
 
-            Items.Add(new ConfigItemCheckbox("FSUIPC7 Connector", "Use FSUIPC7 as Secondary Connector for MSFS 2020/2024 (recommended)", Config.OptionFsuipc7UseSecondary, Config));
+            Items.Add(new ConfigItemCheckbox(Localization.Translate("FSUIPC7 Connector"), Localization.Translate("Use FSUIPC7 as Secondary Connector for MSFS 2020/2024 (recommended)"), Config.OptionFsuipc7UseSecondary, Config));
 
-            Items.Add(new ConfigItemCheckbox("vJoy Driver", "Install/Update vJoy Driver (recommended)", Config.OptionVjoyInstallUpdate, Config));
+            Items.Add(new ConfigItemCheckbox(Localization.Translate("vJoy Driver"), Localization.Translate("Install/Update vJoy Driver (recommended)"), Config.OptionVjoyInstallUpdate, Config));
 
             if (Config.Mode == SetupMode.UPDATE)
-                Items.Add(new ConfigItemCheckbox("Reset Configuration", "Reset Plugin Configuration to Default (only for Troubleshooting)", Config.OptionResetConfiguration, Config));
+                Items.Add(new ConfigItemCheckbox(Localization.Translate("Reset Configuration"), Localization.Translate("Reset Plugin Configuration to Default (only for Troubleshooting)"), Config.OptionResetConfiguration, Config));
         }
 
         protected override void SetFooter()
@@ -32,7 +33,7 @@ namespace Installer
 
         protected virtual void AddIgnoreMsfsHint(string version)
         {
-            var header = CreateTextBlock($"Requirements for MSFS {version} will be ignored", 10, FontWeights.DemiBold);
+            var header = CreateTextBlock(Localization.Translate("Requirements for MSFS {0} will be ignored", version), 10, FontWeights.DemiBold);
             AddFooter(header);
         }
     }

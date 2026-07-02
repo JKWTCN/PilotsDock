@@ -1,6 +1,7 @@
 ﻿using CFIT.AppLogger;
 using CFIT.Installer.LibFunc;
 using CFIT.Installer.Tasks;
+using Localization = CFIT.Installer.UI.Localization;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace Installer.Worker
         protected int CountSimulators { get; set; } = 0;
         protected List<string> SimulatorMessages { get; } = new List<string>();
 
-        public WorkerCheckSimulators(Config config) : base(config, "Installed Simulators", "Checking installed Simulators ...")
+        public WorkerCheckSimulators(Config config) : base(config, Localization.Translate("Installed Simulators"), Localization.Translate("Checking installed Simulators ..."))
         {
             Model.DisplayCompleted = true;
             Model.DisplayInSummary = true;
@@ -36,24 +37,24 @@ namespace Installer.Worker
                 msfsVersions.Add("2024");
 
             if (msfsVersions.Count > 0)
-                SimulatorMessages.Add($"Found: MSFS {string.Join(", ", msfsVersions)}");
+                SimulatorMessages.Add(Localization.Translate("Found: MSFS {0}", string.Join(", ", msfsVersions)));
 
             //X-Plane
             var xpVersions = CheckXplane();
             if (xpVersions.Count > 0)
-                SimulatorMessages.Add($"Found: X-Plane {string.Join(", ", xpVersions)}");
+                SimulatorMessages.Add(Localization.Translate("Found: X-Plane {0}", string.Join(", ", xpVersions)));
 
             //Prepar3D
             var p3dVersions = CheckPrepar3d();
             if (p3dVersions.Count > 0)
-                SimulatorMessages.Add($"Found: Prepar3D {string.Join(", ", p3dVersions)}");
+                SimulatorMessages.Add(Localization.Translate("Found: Prepar3D {0}", string.Join(", ", p3dVersions)));
 
             Config.SetOption(Config.OptionSearchSimulators, SearchSimulators);
             Config.SetOption(Config.OptionPackagePaths, PackagePaths);
 
             if (CountSimulators == 0)
             {
-                Model.SetSuccess("No Simulators found - Can not check for Requirements!");
+                Model.SetSuccess(Localization.Translate("No Simulators found - Can not check for Requirements!"));
                 Model.State = TaskState.WAITING;
             }
             else
@@ -67,7 +68,7 @@ namespace Installer.Worker
 
         protected bool CheckMsfs(Simulator sim)
         {
-            Model.Message = $"Searching Package Path for {sim} ...";
+            Model.Message = Localization.Translate("Searching Package Path for {0} ...", sim);
             if (FuncMsfs.CheckInstalledMsfs(sim, SimulatorStore.All, out Dictionary<SimulatorStore, string> paths))
             {
                 CountSimulators++;

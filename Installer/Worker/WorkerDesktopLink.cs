@@ -1,5 +1,6 @@
 ﻿using CFIT.AppTools;
 using CFIT.Installer.Tasks;
+using Localization = CFIT.Installer.UI.Localization;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace Installer.Worker
     {
         public DesktopLinkOperation Operation { get; set; }
 
-        public WorkerDesktopLink(Config config, DesktopLinkOperation operation) : base(config, "Desktop Link", "Creating Link ...")
+        public WorkerDesktopLink(Config config, DesktopLinkOperation operation) : base(config, Localization.Translate("Desktop Link"), Localization.Translate("Creating Link ..."))
         {
             Model.DisplayCompleted = true;
             Model.DisplayInSummary = true;
@@ -25,7 +26,7 @@ namespace Installer.Worker
 
         protected virtual bool CreateLink()
         {
-            return Sys.CreateLink(Config.ProfileManagerName, Config.ProfileManagerExePath, $"Start {Config.ProfileManagerName}");
+            return Sys.CreateLink(Config.ProfileManagerName, Config.ProfileManagerExePath, Localization.Translate("Start {0}", Config.ProfileManagerName));
         }
 
         protected virtual bool RemoveLink()
@@ -51,13 +52,13 @@ namespace Installer.Worker
             {
                 result = CreateLink();
                 if (result)
-                    Model.SetSuccess($"Link for {Config.ProfileManagerName} placed on Desktop!");
+                    Model.SetSuccess(Localization.Translate("Link for {0} placed on Desktop!", Config.ProfileManagerName));
             }
             else if (Operation == DesktopLinkOperation.REMOVE)
             {
                 result = RemoveLink();
                 if (result)
-                    Model.SetSuccess($"Link for {Config.ProfileManagerName} removed from Desktop!");
+                    Model.SetSuccess(Localization.Translate("Link for {0} removed from Desktop!", Config.ProfileManagerName));
             }
 
             return result;

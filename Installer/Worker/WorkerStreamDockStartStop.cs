@@ -2,6 +2,7 @@ using CFIT.AppLogger;
 using CFIT.AppTools;
 using CFIT.Installer.LibWorker;
 using CFIT.Installer.Tasks;
+using Localization = CFIT.Installer.UI.Localization;
 using System;
 using System.Threading.Tasks;
 
@@ -15,7 +16,7 @@ namespace Installer.Worker
         public virtual bool RefocusWindow { get; set; } = false;
         public virtual string RefocusWindowTitle { get; set; } = string.Empty;
 
-        public WorkerStreamDockStartStop(Config config, DeckProcessOperation operation) : base(config, "StreamDock", "Processing StreamDock ...")
+        public WorkerStreamDockStartStop(Config config, DeckProcessOperation operation) : base(config, Localization.Translate("StreamDock"), Localization.Translate("Processing StreamDock ..."))
         {
             Model.DisplayCompleted = false;
             Model.DisplayInSummary = false;
@@ -24,13 +25,13 @@ namespace Installer.Worker
             // Set the correct title and message based on operation
             if (operation == DeckProcessOperation.STOP || operation == DeckProcessOperation.KILL)
             {
-                Model.Title = "StreamDock";
-                Model.Message = "Stopping StreamDock ...";
+                Model.Title = Localization.Translate("StreamDock");
+                Model.Message = Localization.Translate("Stopping StreamDock ...");
             }
             else if (operation == DeckProcessOperation.START)
             {
-                Model.Title = "StreamDock";
-                Model.Message = "Starting StreamDock ...";
+                Model.Title = Localization.Translate("StreamDock");
+                Model.Message = Localization.Translate("Starting StreamDock ...");
             }
         }
 
@@ -43,7 +44,7 @@ namespace Installer.Worker
                 if (Operation == DeckProcessOperation.STOP || Operation == DeckProcessOperation.KILL)
                 {
                     Logger.Debug("Stopping PilotsDeck Plugin for StreamDock");
-                    Model.Message = "Stopping StreamDock ...";
+                    Model.Message = Localization.Translate("Stopping StreamDock ...");
 
                     if (Sys.GetProcessRunning(Config.PluginBinary))
                     {
@@ -55,13 +56,13 @@ namespace Installer.Worker
                     Sys.KillProcess("StreamDock");
                     await Task.Delay(500);
 
-                    Model.SetSuccess("StreamDock stopped.");
+                    Model.SetSuccess(Localization.Translate("StreamDock stopped."));
                     return true;
                 }
                 else if (Operation == DeckProcessOperation.START)
                 {
                     Logger.Debug("Starting StreamDock Software");
-                    Model.Message = "Starting StreamDock ...";
+                    Model.Message = Localization.Translate("Starting StreamDock ...");
 
                     // Start StreamDock software - check for StreamDock executable
                     try
@@ -105,7 +106,7 @@ namespace Installer.Worker
                         Sys.SetForegroundWindow(RefocusWindowTitle);
                     }
 
-                    Model.SetSuccess("StreamDock started.");
+                    Model.SetSuccess(Localization.Translate("StreamDock started."));
                     return true;
                 }
             }
@@ -113,7 +114,7 @@ namespace Installer.Worker
             {
                 Logger.LogException(ex);
                 if (!IgnorePluginRunning)
-                    Model.SetError($"Error with StreamDock: {ex.Message}");
+                    Model.SetError(Localization.Translate("Error with StreamDock: {0}", ex.Message));
                 return !IgnorePluginRunning;
             }
 

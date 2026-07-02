@@ -2,6 +2,7 @@
 using CFIT.AppTools;
 using CFIT.Installer.LibFunc;
 using CFIT.Installer.Tasks;
+using Localization = CFIT.Installer.UI.Localization;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,7 +17,7 @@ namespace Installer.Worker
         public static string VjoyRegValue { get; set; } = "DisplayVersion";
         public virtual string VjoyVersion { get; set; } = "2.2.2.0";
 
-        public WorkerVjoyInstall(Config config) : base(config, "vJoy Driver", "Checking installed Version ...")
+        public WorkerVjoyInstall(Config config) : base(config, Localization.Translate("vJoy Driver"), Localization.Translate("Checking installed Version ..."))
         {
             Model.DisplayCompleted = true;
             Model.DisplayInSummary = false;
@@ -32,7 +33,7 @@ namespace Installer.Worker
 
             if (CheckVersion(VjoyVersion))
             {
-                Model.SetSuccess($"vJoy Driver Version {VjoyVersion} installed.");
+                Model.SetSuccess(Localization.Translate("vJoy Driver Version {0} installed.", VjoyVersion));
                 return true;
             }
             else
@@ -42,30 +43,30 @@ namespace Installer.Worker
                 bool newInstall = !IsInstalled();
 
                 if (newInstall)
-                    Model.AddMessage(new TaskMessage($"vJoy Driver is not installed!", false, FontWeights.DemiBold), true, false);
+                    Model.AddMessage(new TaskMessage(Localization.Translate("vJoy Driver is not installed!"), false, FontWeights.DemiBold), true, false);
                 else
-                    Model.AddMessage(new TaskMessage($"The installed Version does not match the target Version {Config.VjoyVersion}!", false, FontWeights.DemiBold), true, false);
+                    Model.AddMessage(new TaskMessage(Localization.Translate("The installed Version does not match the target Version {0}!", Config.VjoyVersion), false, FontWeights.DemiBold), true, false);
 
                 Model.State = TaskState.WAITING;
 
-                Model.Message = "Downloading vJoy Installer ...";
+                Model.Message = Localization.Translate("Downloading vJoy Installer ...");
                 string installer = await FuncIO.DownloadFile(Token, VjoyUrl, VjoyUrlFile);
                 if (string.IsNullOrWhiteSpace(installer))
                 {
-                    Model.SetError("Could not download vJoy Installer!");
+                    Model.SetError(Localization.Translate("Could not download vJoy Installer!"));
                     return false;
                 }
 
-                Model.Message = $"Installing vJoy Driver ...";
+                Model.Message = Localization.Translate("Installing vJoy Driver ...");
                 Sys.RunCommand($"\"{installer}\"", out _);
                 await Task.Delay(500);
                 FuncIO.DeleteFile(installer);
 
-                Model.SetSuccess($"vJoy Driver was installed/updated successfully!");
+                Model.SetSuccess(Localization.Translate("vJoy Driver was installed/updated successfully!"));
                 if (newInstall)
-                    Model.AddMessage(new TaskMessage("Please consider a Reboot!\nNOTE: You need to enable a virtual Joystick and set it to 128 Buttons with the 'vJoyConf' Tool!", true, FontWeights.DemiBold), false, false);
+                    Model.AddMessage(new TaskMessage(Localization.Translate("Please consider a Reboot!\nNOTE: You need to enable a virtual Joystick and set it to 128 Buttons with the 'vJoyConf' Tool!"), true, FontWeights.DemiBold), false, false);
                 else
-                    Model.AddMessage(new TaskMessage("Please consider a Reboot!", true, FontWeights.DemiBold), false, false);
+                    Model.AddMessage(new TaskMessage(Localization.Translate("Please consider a Reboot!"), true, FontWeights.DemiBold), false, false);
                 return true;
             }
         }

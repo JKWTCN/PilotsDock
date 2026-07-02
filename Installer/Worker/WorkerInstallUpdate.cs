@@ -2,6 +2,7 @@
 using CFIT.AppTools;
 using CFIT.Installer.LibFunc;
 using CFIT.Installer.LibWorker;
+using CFIT.Installer.UI;
 using Installer.Tools;
 using System;
 using System.IO;
@@ -23,14 +24,14 @@ namespace Installer
             Model.DisplayCompleted = true;
             Model.DisplayInSummary = true;
 
-            Model.Title = "PilotsDeck Plugin";
+            Model.Title = Localization.Translate("PilotsDeck Plugin");
             SetPropertyFromOption<bool>(Config.OptionResetConfiguration);
             SetPropertyFromOption<bool>(Config.OptionFsuipc7UseSecondary);
         }
 
         protected override async Task<bool> DoRun()
         {
-            Model.Message = "Waiting for Plugin to close ...";
+            Model.Message = Localization.Translate("Waiting for Plugin to close ...");
             await Task.Delay(500);
             if (Sys.GetProcessRunning(Config.PluginBinary))
             {
@@ -38,7 +39,7 @@ namespace Installer
                 Sys.KillProcess(Config.PluginBinary);
                 await Task.Delay(750);
             }
-            
+
             return await base.DoRun();
         }
 

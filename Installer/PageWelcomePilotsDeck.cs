@@ -1,5 +1,6 @@
 ﻿using CFIT.AppTools;
 using CFIT.Installer.UI.Behavior;
+using Localization = CFIT.Installer.UI.Localization;
 using System;
 using System.Windows;
 using System.Windows.Documents;
@@ -11,41 +12,41 @@ namespace Installer
     {
         public PageWelcomePilotsDeck() : base()
         {
-            
+
         }
 
         protected override void SetHeaderHints()
         {
             int maxWidth = 448;
             Thickness margin = new Thickness(8, 16, 8, 0);
-            string text = "This Tool will install the Plugin to your StreamDock Software.\r\nThe Software will be stopped/started during the Installation-Process.\r\nAdded/Changed Profiles, Images and Scripts will stay intact.";
+            string text = Localization.Translate("This Tool will install the Plugin to your StreamDock Software.\r\nThe Software will be stopped/started during the Installation-Process.\r\nAdded/Changed Profiles, Images and Scripts will stay intact.");
             var header = CreateTextBlock(text, 14, FontWeights.DemiBold, HorizontalAlignment.Center);
             header.Width = maxWidth;
             header.TextWrapping = TextWrapping.WrapWithOverflow;
             header.Margin = margin;
             AddHeader(header);
 
-            text = "DO NOT run the Installer, Plugin or StreamDock Software as Admin!\r\nRunning the Simulator or FSUIPC as Admin can eventually cause Connections-Issues!";
+            text = Localization.Translate("DO NOT run the Installer, Plugin or StreamDock Software as Admin!\r\nRunning the Simulator or FSUIPC as Admin can eventually cause Connections-Issues!");
             header = CreateTextBlock(text, 14, FontWeights.Regular, HorizontalAlignment.Center);
             header.Width = maxWidth;
             header.TextWrapping = TextWrapping.WrapWithOverflow;
             header.Margin = margin;
             AddHeader(header);
 
-            text = "PilotsDeck is 100% free and Open-Source. The Software and the Developer do not have any Affiliation to Flight Panels.\r\nIt is the actual Plugin allowing the StreamDock to interface with the Simulator and allowing the Creation of StreamDock Profiles for Airplanes.\r\nSpecial Thanks to Fragtality for the original PilotsDeck Project!";
+            text = Localization.Translate("PilotsDeck is 100% free and Open-Source. The Software and the Developer do not have any Affiliation to Flight Panels.\r\nIt is the actual Plugin allowing the StreamDock to interface with the Simulator and allowing the Creation of StreamDock Profiles for Airplanes.\r\nSpecial Thanks to Fragtality for the original PilotsDeck Project!");
             header = CreateTextBlock(text, 12, FontWeights.Regular, HorizontalAlignment.Center);
             header.TextWrapping = TextWrapping.WrapWithOverflow;
             header.Width = maxWidth;
             margin.Top = 24;
             header.Margin = margin;
-            Hyperlink linkOriginal = new Hyperlink(new Run("Original PilotsDeck by Fragtality"))
+            Hyperlink linkOriginal = new Hyperlink(new Run(Localization.Translate("Original PilotsDeck by Fragtality")))
             {
-                NavigateUri = new Uri("https://github.com/Fragtality/PilotsDeck")
+                NavigateUri = new Uri("https://github.com/Fragtality/PilotsDock")
             };
             linkOriginal.AddHandler(Hyperlink.RequestNavigateEvent, new RequestNavigateEventHandler(Nav.RequestNavigateHandler));
             header.Inlines.Add(new Run("\r\n"));
             header.Inlines.Add(linkOriginal);
-            Hyperlink linkFork = new Hyperlink(new Run("This StreamDock Fork on GitHub"))
+            Hyperlink linkFork = new Hyperlink(new Run(Localization.Translate("This StreamDock Fork on GitHub")))
             {
                 NavigateUri = new Uri("https://github.com/JKWTCN/PilotsDock")
             };
