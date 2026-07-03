@@ -45,14 +45,17 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CFIT.AppLogger, Version=2026.162.13.2773, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\CFIT.AppLogger.2026.162.13.2773\lib\net48\CFIT.AppLogger.dll</HintPath>
+    <Reference Include="CFIT.AppLogger, Version=2026.182.14.28, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\CFIT.AppLogger.2026.182.14.28\lib\net48\CFIT.AppLogger.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="CFIT.AppTools, Version=2026.162.13.2782, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\CFIT.AppTools.2026.162.13.2782\lib\net48\CFIT.AppTools.dll</HintPath>
+    <Reference Include="CFIT.AppTools, Version=2026.183.21.2725, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\CFIT.AppTools.2026.183.21.2725\lib\net48\CFIT.AppTools.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="CFIT.Installer, Version=2026.162.13.2796, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\CFIT.Installer.2026.162.13.2796\lib\net48\CFIT.Installer.dll</HintPath>
+    <Reference Include="CFIT.Installer, Version=2026.183.21.2678, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\CFIT.Installer.2026.183.21.2678\lib\net48\CFIT.Installer.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Costura, Version=6.2.0.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
       <HintPath>..\packages\Costura.Fody.6.2.0\lib\netstandard2.0\Costura.dll</HintPath>
@@ -185,7 +188,6 @@
     <Compile Include="WorkerManager.cs" />
     <Compile Include="Worker\WorkerLegacyProfiles.cs" />
     <Compile Include="Worker\WorkerMobi.cs" />
-    <Compile Include="Worker\WorkerStreamDeckSoftware.cs" />
     <Compile Include="Worker\WorkerStreamDockStartStop.cs" />
     <Compile Include="Worker\WorkerVjoyInstall.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -200,6 +202,42 @@
     <EmbeddedResource Include="Payload\AppPackage.zip" />
     <EmbeddedResource Include="Payload\version.json" />
     <EmbeddedResource Include="Payload\PluginConfig.json" />
+    <EmbeddedResource Include="Localization\en.json">
+      <LogicalName>CFIT.Installer.Localization.en.json</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\de.json">
+      <LogicalName>CFIT.Installer.Localization.de.json</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\el.json">
+      <LogicalName>CFIT.Installer.Localization.el.json</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\es.json">
+      <LogicalName>CFIT.Installer.Localization.es.json</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\fr.json">
+      <LogicalName>CFIT.Installer.Localization.fr.json</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\it.json">
+      <LogicalName>CFIT.Installer.Localization.it.json</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\ja.json">
+      <LogicalName>CFIT.Installer.Localization.ja.json</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\ko.json">
+      <LogicalName>CFIT.Installer.Localization.ko.json</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\pt.json">
+      <LogicalName>CFIT.Installer.Localization.pt.json</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\ru.json">
+      <LogicalName>CFIT.Installer.Localization.ru.json</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\zh_CN.json">
+      <LogicalName>CFIT.Installer.Localization.zh_CN.json</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\zh_HK.json">
+      <LogicalName>CFIT.Installer.Localization.zh_HK.json</LogicalName>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -224,7 +262,7 @@
   </Target>
   <PropertyGroup>
     <PreBuildEvent>pwsh -ExecutionPolicy Unrestricted -file "$(ProjectDir)..\NuPreBuild.ps1" $(SolutionDir) $(ProjectDir) "Installer" "CFIT.AppTools" "CFIT.Installer"
-pwsh -ExecutionPolicy Unrestricted -file "$(ProjectDir)PackageApp.ps1" $(SolutionDir) "Installer" "Payload" "Plugin" "PilotsDock" "Releases\com.extension.pilotsdeck.sdPlugin"</PreBuildEvent>
+pwsh -ExecutionPolicy Unrestricted -file "$(ProjectDir)PackageApp.ps1" $(SolutionDir) "Installer" "Payload" "Plugin" "PilotsDock" "Releases\com.mirabox.pilotsdock.sdPlugin"</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>pwsh -ExecutionPolicy Unrestricted -file "$(ProjectDir)ExportInstaller.ps1" $(SolutionDir) $(TargetDir) $(TargetFileName) "PilotsDock"</PostBuildEvent>
