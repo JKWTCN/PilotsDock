@@ -15,7 +15,7 @@
       "Encoder": {
         "layout": "Plugin/layout-pilotsdeck.json"
       },
-      "SupportedInMultiActions": false,
+      "SupportedInMultiActions": true,
       "PropertyInspectorPath": "Plugin/PI/pi-Display.html",
       "Tooltip": "Old Display Value Action without Command",
       "UUID": "com.extension.pilotsdeck.action.display"
@@ -34,7 +34,7 @@
       "Encoder": {
         "layout": "Plugin/layout-pilotsdeck.json"
       },
-      "SupportedInMultiActions": false,
+      "SupportedInMultiActions": true,
       "PropertyInspectorPath": "Plugin/PI/pi-DisplaySwitch.html",
       "Tooltip": "The Display Value Action combined with a Simple Button",
       "UUID": "com.extension.pilotsdeck.action.display.switch"
@@ -68,7 +68,7 @@
       "Encoder": {
         "layout": "Plugin/layout-pilotsdeck.json"
       },
-      "SupportedInMultiActions": false,
+      "SupportedInMultiActions": true,
       "PropertyInspectorPath": "Plugin/PI/pi-SwitchDisplay.html",
       "Tooltip": "A Button with Status Indication of its current State in the Sim",
       "UUID": "com.extension.pilotsdeck.action.switch.display"
@@ -87,7 +87,7 @@
       "Encoder": {
         "layout": "Plugin/layout-pilotsdeck.json"
       },
-      "SupportedInMultiActions": false,
+      "SupportedInMultiActions": true,
       "PropertyInspectorPath": "Plugin/PI/pi-SwitchKorry.html",
       "Tooltip": "A Button with Status Indication, with two independent Halves (top, bottom)",
       "UUID": "com.extension.pilotsdeck.action.switch.korry"
@@ -106,7 +106,7 @@
       "Encoder": {
         "layout": "Plugin/layout-pilotsdeck.json"
       },
-      "SupportedInMultiActions": false,
+      "SupportedInMultiActions": true,
       "PropertyInspectorPath": "Plugin/PI/pi-DisplayRadio.html",
       "Tooltip": "Can display and swap your active & standby COM Frequencies",
       "UUID": "com.extension.pilotsdeck.action.display.radio"
@@ -125,7 +125,7 @@
       "Encoder": {
         "layout": "Plugin/layout-pilotsdeck.json"
       },
-      "SupportedInMultiActions": false,
+      "SupportedInMultiActions": true,
       "PropertyInspectorPath": "Plugin/PI/pi-DisplayGauge.html",
       "Tooltip": "Display a Value on a Bar or Arc",
       "UUID": "com.extension.pilotsdeck.action.display.gauge"
@@ -140,7 +140,7 @@
           "FontSize": 10
         }
       ],
-      "SupportedInMultiActions": false,
+      "SupportedInMultiActions": true,
       "PropertyInspectorPath": "Plugin/PI/pi-DisplayGaugeDual.html",
       "Tooltip": "A graphical representation of two Values",
       "UUID": "com.extension.pilotsdeck.action.display.gauge.dual"
@@ -159,7 +159,7 @@
       "Encoder": {
         "layout": "Plugin/layout-pilotsdeck.json"
       },
-      "SupportedInMultiActions": false,
+      "SupportedInMultiActions": true,
       "PropertyInspectorPath": "Plugin/PI/pi-Meta.html",
       "Tooltip": "Advanced Action composed of different Elements",
       "UUID": "com.extension.pilotsdeck.action.meta"
@@ -174,7 +174,7 @@
           "FontSize": 10
         }
       ],
-      "SupportedInMultiActions": false,
+      "SupportedInMultiActions": true,
       "PropertyInspectorPath": "Plugin/PI/pi-ProfileSwitcher.html",
       "Tooltip": "Allows to switch between StreamDeck Profiles based on the loaded Aircraft",
       "UUID": "com.extension.pilotsdeck.action.profile.switcher"
