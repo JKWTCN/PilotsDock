@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 // Allgemeine Informationen über eine Assembly werden über die folgenden 
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die einer Assembly zugeordnet sind.
-[assembly: AssemblyTitle("PilotsDeck Installer v0.9.3.0 (2026.07.16.2107)")]
+[assembly: AssemblyTitle("PilotsDeck Installer v0.9.3.0 (2026.07.16.2234)")]
 [assembly: AssemblyDescription("Installer Application for PilotsDeck")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Fragtality")]
