@@ -16,6 +16,10 @@ If you don't: be eager to read & learn! 😅 I'll try to give some Background in
 
 **Note**: PilotsDeck is 100% free and Open-Source. The Software and the Developer do **not have any Affiliation to Flight Panels**. You basically spend Money instead of Time to let a Power-User create the Profile(s) for you. That is totally fine - *IF* you knew you had the Option. Choose the Approach that suits you best! 😃<br/><br/>
 
+**DEPRECATION NOTICE**
+Support for MiraBox/HotSpot Devices will be removed!
+Use the [PilotsDock-Fork](https://github.com/JKWTCN/PilotsDock/releases) by JKWTCN for these Devices 👍 <br/><br/>
+
 User-Contributed and my Profiles for specific Planes are shared/linked under [Integrations](Integrations/). Since there aren't that many: If your Plane is not among these, they can at least serve as Example on what you could do:<br/>
 <img src="img/Example01XL.jpg" width="420"><br/>
 <img src="img/ExampleLayout02.jpg" width="420"><br/>
@@ -101,8 +105,8 @@ On the second Installer Page are some Options to customize your Installation:
 - Desktop Icon to the Profile Manager App
 - Enable (and Check) FSUIPC7 as secondary Connector for MSFS
 - Install/Update the vJoy Driver
-- **Install Location**: Choose if the Plugin should be installed to Elegato StreamD**e**ck or MiraBox/HotSpot StreamD**o**ck
-  - :exclamation: The Plugin is primarily for StreamDeck and focuses on Compatibility with Elgato. As long as MiraBox/HotSpot mimics the same API, it should be fine.
+
+:exclamation: For MiraBox/HotSpot Devices use the [PilotsDock-Fork](https://github.com/JKWTCN/PilotsDock/releases) by JKWTCN 👍
 
 <br/>
 
@@ -126,9 +130,8 @@ The Requirements for the Plugin:
 <br/>
 
 Install Location for Elegato StreamDeck: `%appdata%\Elgato\StreamDeck\Plugins\com.extension.pilotsdeck.sdPlugin` <br/>
-Install Location for MiraBox/HotSpot StreamDock: `%appdata%\HotSpot\StreamDock\Plugins\com.extension.pilotsdeck.sdPlugin`
 
-The Plugin is automatically started with the StreamDeck/Dock Software. It will spawn its own Icon in the System-Tray / Notification Area. Use this Icon to see if a Plugin Update is available, to access the [Developer UI](#32---developer-ui) or open the **Profile Manager** to configure [Profile Switching](#34---profile-switching).<br/>
+The Plugin is automatically started with the StreamDeck Software. It will spawn its own Icon in the System-Tray / Notification Area. Use this Icon to see if a Plugin Update is available, to access the [Developer UI](#32---developer-ui) or open the **Profile Manager** to configure [Profile Switching](#34---profile-switching).<br/>
 <img src="img/Plugin-Systray.png" width="267"><br/><br/>
 
 **Note:** Since FSUIPC is only a "secondary" Connector for MSFS, you do not need to have it installed anymore (for MSFS). If you not plan to install/run FSUIPC7, uncheck the respective Option in the Installer!<br/>
