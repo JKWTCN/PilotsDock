@@ -17,9 +17,7 @@ namespace PilotsDeck.StreamDeck
                 return new PointF(200, 100);
             else
             {
-                if (Type == StreamDeckType.StreamDeckXL)
-                    return new PointF(144, 144);
-                else if (Type == StreamDeckType.StreamDeckPlus)
+                if (Type == StreamDeckType.StreamDeckXL || Type == StreamDeckType.StreamDeckVirtual || Type == StreamDeckType.StreamDeckXLPlus || Type == StreamDeckType.StreamDeckPlus)
                     return new PointF(144, 144);
                 else
                     return new PointF(72, 72);
