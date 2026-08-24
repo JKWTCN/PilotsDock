@@ -193,17 +193,22 @@ Commands available on all Actions *except* the Composite Action:<br/>
 
 - Actions on Keypads have a **Main Command** and an optional **Second Command** when pressed longer (>= 500ms).
 - Actions on Encoders have the **Dial Left Command**, **Dial Right Command** and the **Touch Command** in Addition to Main and Second - these two will be used when you press the Encoder.
+- Actions on Encoders can have additional and different Commands assigned when the Dial is **turned when pressed** (Dial Left Pressed Command and Dial Right Pressed Command).
+  - When the Pressed Commands are not assigned, the (normal) Left/Right Commands are executed regardless if the Dial is pressed or not.
+  - It is not advised to map a Main or Second Command when the Left/Right Pressed Commands are mapped (maybe besides some special Use-Cases to track/prepare/cleanup some State when the Dial was pressed).
+  - Any assigned Main/Second Command is executed in any Case when the Dial is pressed (and released).
 - All Actions can have an optional **Guard Command** to be executed before the Main and Second Command.
 - The different Commands can each use a different Type, they don't need to be the same - the Main Command could be SCRIPT, the Left/Right Command could be CALCULATOR and the Touch Command LVAR for Example (but note that they share some Settings).
 
 <br/>
 Commands available on the Composite Action:<br/>
 
-- Every (Composite) Action always supports every StreamDeck Event (**KEY_DOWN, KEY_UP, DIAL_DOWN, DIAL_UP, DIAL_LEFT, DIAL_RIGHT, TOUCH_TAP**), regardless on which StreamDeck it is currently on.
+- Every (Composite) Action always supports every StreamDeck Event (**KEY_DOWN, KEY_UP, DIAL_DOWN, DIAL_UP, DIAL_LEFT, DIAL_RIGHT, TOUCH_TAP, DIAL_LEFT_PRESSED, DIAL_RIGHT_PRESSED**), regardless on which StreamDeck it is currently on.
 - You can **add every Command** the Plugin offers to **every Event** the StreamDeck sends. (But: adding a Command to DIAL_UP on a Keypad will do nothing, for example)
 - For **both _UP** Events, you can configure Commands to be only executed after an **individual Down-Time** - like the Second Command from the other Actions. *BUT*: you can have multiple of those with different Times!
 - Every Command can have one or more **Conditions**: The Command will only be run when all (or at least one) Condition is true. You can use **any Variable** the Plugin & Sim supports for these Conditions.
 - You can add **multiple Commands** per Event, they will be run in Sequence then with a configurable Delay per Event. (But only if their configured Conditions are met)
+- Regarding the Left/Right Pressed Commands, the same Statements and Recommendations apply: UP/DOWN should not be mapped (since they are executed in any Case) and if PRESSED is not mapped, the normal LEFT/RIGHT Command is executed
 
 <br/><br/>
 

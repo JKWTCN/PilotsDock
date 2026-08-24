@@ -13,7 +13,9 @@ namespace PilotsDeck.Actions
         DIAL_UP = 3,
         DIAL_LEFT = 4,
         DIAL_RIGHT = 5,
-        TOUCH_TAP = 6
+        TOUCH_TAP = 6,
+        DIAL_LEFT_PRESSED = 7,
+        DIAL_RIGHT_PRESSED = 8,
     }
 
     public enum GaugeOrientation

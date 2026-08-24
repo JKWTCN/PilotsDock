@@ -118,6 +118,8 @@ function fillActionSelectBoxes(actionList) {
 	if (settingsModel.IsEncoder) {
 		fillTypeSelectBox(actionList, 'ActionTypeLeft', settingsModel.ActionTypeLeft);
 		fillTypeSelectBox(actionList, 'ActionTypeRight', settingsModel.ActionTypeRight);
+		fillTypeSelectBox(actionList, 'ActionTypeLeftPressed', settingsModel.ActionTypeLeftPressed);
+		fillTypeSelectBox(actionList, 'ActionTypeRightPressed', settingsModel.ActionTypeRightPressed);
 		fillTypeSelectBox(actionList, 'ActionTypeTouch', settingsModel.ActionTypeTouch);
 	}
 }
@@ -474,6 +476,8 @@ function commonFormUpdate() {
 		if (settingsModel.IsEncoder) {
 			setPattern('AddressActionLeft', settingsModel.ActionTypeLeft, settingsModel.DoNotRequestBvar);
 			setPattern('AddressActionRight', settingsModel.ActionTypeRight, settingsModel.DoNotRequestBvar);
+			setPattern('AddressActionLeftPressed', settingsModel.ActionTypeLeftPressed, settingsModel.DoNotRequestBvar);
+			setPattern('AddressActionRightPressed', settingsModel.ActionTypeRightPressed, settingsModel.DoNotRequestBvar);
 			setPattern('AddressActionTouch', settingsModel.ActionTypeTouch, settingsModel.DoNotRequestBvar);
 		}
 
@@ -491,6 +495,8 @@ function commonFormUpdate() {
 		if (settingsModel.IsEncoder) {
 			setActionFields('Left', settingsModel.ActionTypeLeft, settingsModel);
 			setActionFields('Right', settingsModel.ActionTypeRight, settingsModel);
+			setActionFields('LeftPressed', settingsModel.ActionTypeLeftPressed, settingsModel);
+			setActionFields('RightPressed', settingsModel.ActionTypeRightPressed, settingsModel);
 			setActionFields('Touch', settingsModel.ActionTypeTouch, settingsModel);
 		}
 	}

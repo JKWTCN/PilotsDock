@@ -31,7 +31,9 @@
     <None Remove="UI\Icons\Collapsed.png" />
     <None Remove="UI\Icons\CommandDialDown.png" />
     <None Remove="UI\Icons\CommandDialLeft.png" />
+    <None Remove="UI\Icons\CommandDialLeftPressed.png" />
     <None Remove="UI\Icons\CommandDialRight.png" />
+    <None Remove="UI\Icons\CommandDialRightPressed.png" />
     <None Remove="UI\Icons\CommandDialUp.png" />
     <None Remove="UI\Icons\CommandKeyDown.png" />
     <None Remove="UI\Icons\CommandKeyUp.png" />
@@ -86,10 +88,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CFIT.AppFramework" Version="2026.197.22.2053" />
-    <PackageReference Include="CFIT.AppLogger" Version="2026.197.22.1984" />
-    <PackageReference Include="CFIT.AppTools" Version="2026.197.22.1992" />
-    <PackageReference Include="CFIT.SimConnectLib" Version="2026.197.22.2040" />
+    <PackageReference Include="CFIT.AppFramework" Version="2026.234.21.2188" />
+    <PackageReference Include="CFIT.AppLogger" Version="2026.234.21.2130" />
+    <PackageReference Include="CFIT.AppTools" Version="2026.234.21.2146" />
+    <PackageReference Include="CFIT.SimConnectLib" Version="2026.234.21.2173" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageReference Include="FSUIPCClientDLL" Version="3.3.16" />
     <PackageReference Include="H.NotifyIcon.Wpf" Version="2.4.1" />
@@ -142,7 +144,9 @@
     <Resource Include="UI\Icons\Collapsed.png" />
     <Resource Include="UI\Icons\CommandDialDown.png" />
     <Resource Include="UI\Icons\CommandDialLeft.png" />
+    <Resource Include="UI\Icons\CommandDialLeftPressed.png" />
     <Resource Include="UI\Icons\CommandDialRight.png" />
+    <Resource Include="UI\Icons\CommandDialRightPressed.png" />
     <Resource Include="UI\Icons\CommandDialUp.png" />
     <Resource Include="UI\Icons\CommandKeyDown.png" />
     <Resource Include="UI\Icons\CommandKeyUp.png" />

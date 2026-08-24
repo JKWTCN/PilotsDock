@@ -23,6 +23,7 @@ namespace PilotsDeck.Actions.Simple
         public virtual string Title { get; set; }
         public virtual SettingsTitle TitleSettings { get; set; }
         public virtual bool IsEncoder { get; protected set; }
+        public virtual bool IsTurning { get; protected set; } = false;
         public virtual StreamDeckCanvasInfo CanvasInfo { get; set; }
         public virtual SettingsModelSimple Settings { get; set; }
         public virtual bool SettingModelUpdated { get; set; } = false;
@@ -96,6 +97,11 @@ namespace PilotsDeck.Actions.Simple
             CleanCommands();
         }
 
+        protected virtual bool HasDialPressCommands()
+        {
+            return RessourceStore.GetCommand(SwitchID.SwitchLeftPressed, out _) != null || RessourceStore.GetCommand(SwitchID.SwitchRightPressed, out _) != null;
+        }
+
         protected virtual void CheckSettings()
         {
 
@@ -165,6 +171,8 @@ namespace PilotsDeck.Actions.Simple
                     Settings.AddressActionGuardOff = "";
                     Settings.AddressActionLeft = "";
                     Settings.AddressActionRight = "";
+                    Settings.AddressActionLeftPressed = "";
+                    Settings.AddressActionRightPressed = "";
                     Settings.AddressActionTouch = "";
 
                     Settings.ActionType = SimCommandType.LVAR;
@@ -172,6 +180,8 @@ namespace PilotsDeck.Actions.Simple
                     Settings.ActionTypeGuard = SimCommandType.LVAR;
                     Settings.ActionTypeLeft = SimCommandType.LVAR;
                     Settings.ActionTypeRight = SimCommandType.LVAR;
+                    Settings.ActionTypeLeftPressed = SimCommandType.LVAR;
+                    Settings.ActionTypeRightPressed = SimCommandType.LVAR;
                     Settings.ActionTypeTouch = SimCommandType.LVAR;
                 }
 
@@ -192,9 +202,13 @@ namespace PilotsDeck.Actions.Simple
                 {
                     Settings.AddressActionLeft = "";
                     Settings.AddressActionRight = "";
+                    Settings.AddressActionLeftPressed = "";
+                    Settings.AddressActionRightPressed = "";
                     Settings.AddressActionTouch = "";
                     Settings.ActionTypeLeft = SimCommandType.LVAR;
                     Settings.ActionTypeRight = SimCommandType.LVAR;
+                    Settings.ActionTypeLeftPressed = SimCommandType.LVAR;
+                    Settings.ActionTypeRightPressed = SimCommandType.LVAR;
                     Settings.ActionTypeTouch = SimCommandType.LVAR;
                 }
 
@@ -250,6 +264,8 @@ namespace PilotsDeck.Actions.Simple
             {
                 RessourceStore.AddCommand(SwitchID.SwitchLeft, Settings);
                 RessourceStore.AddCommand(SwitchID.SwitchRight, Settings);
+                RessourceStore.AddCommand(SwitchID.SwitchLeftPressed, Settings);
+                RessourceStore.AddCommand(SwitchID.SwitchRightPressed, Settings);
                 RessourceStore.AddCommand(SwitchID.SwitchTouch, Settings);
             }
 
@@ -297,6 +313,8 @@ namespace PilotsDeck.Actions.Simple
             {
                 RessourceStore.UpdateCommand(SwitchID.SwitchLeft, Settings);
                 RessourceStore.UpdateCommand(SwitchID.SwitchRight, Settings);
+                RessourceStore.UpdateCommand(SwitchID.SwitchLeftPressed, Settings);
+                RessourceStore.UpdateCommand(SwitchID.SwitchRightPressed, Settings);
                 RessourceStore.UpdateCommand(SwitchID.SwitchTouch, Settings);
             }
 
@@ -352,6 +370,8 @@ namespace PilotsDeck.Actions.Simple
             {
                 RessourceStore.RemoveCommand(SwitchID.SwitchLeft);
                 RessourceStore.RemoveCommand(SwitchID.SwitchRight);
+                RessourceStore.RemoveCommand(SwitchID.SwitchLeftPressed);
+                RessourceStore.RemoveCommand(SwitchID.SwitchRightPressed);
                 RessourceStore.RemoveCommand(SwitchID.SwitchTouch);
             }
 
@@ -474,13 +494,19 @@ namespace PilotsDeck.Actions.Simple
             {
                 simCommand = null;
             }
-            else if (sdEvent.payload.ticks < 0 && RessourceStore.GetCommand(SwitchID.SwitchLeft, out ActionCommand leftCommand) != null)
+            else if (sdEvent.payload.ticks < 0)
             {
-                simCommand = leftCommand?.GetSimCommand(Context, sdEvent.payload.ticks, true);
+                if (sdEvent.payload.pressed && RessourceStore.GetCommand(SwitchID.SwitchLeftPressed, out ActionCommand leftCommandPressed) != null)
+                    simCommand = leftCommandPressed?.GetSimCommand(Context, sdEvent.payload.ticks, true);
+                else if (RessourceStore.GetCommand(SwitchID.SwitchLeft, out ActionCommand leftCommand) != null)
+                    simCommand = leftCommand?.GetSimCommand(Context, sdEvent.payload.ticks, true);
             }
-            else if (sdEvent.payload.ticks > 0 && RessourceStore.GetCommand(SwitchID.SwitchRight, out ActionCommand rightCommand) != null)
+            else if (sdEvent.payload.ticks > 0)
             {
-                simCommand = rightCommand?.GetSimCommand(Context, sdEvent.payload.ticks, true);
+                if (sdEvent.payload.pressed && RessourceStore.GetCommand(SwitchID.SwitchRightPressed, out ActionCommand rightCommandPressed) != null)
+                    simCommand = rightCommandPressed?.GetSimCommand(Context, sdEvent.payload.ticks, true);
+                else if (RessourceStore.GetCommand(SwitchID.SwitchRight, out ActionCommand rightCommand) != null)
+                    simCommand = rightCommand?.GetSimCommand(Context, sdEvent.payload.ticks, true);
             }
 
             if (simCommand == null)
@@ -541,7 +567,7 @@ namespace PilotsDeck.Actions.Simple
 
             GuardHoldDown = false;
 
-            if (simCommand == null)
+            if (simCommand == null && (!IsEncoder || !HasDialPressCommands()))
             {
                 Logger.Warning($"Could not build SimCommand for Action '{Title}' ({GetType()?.Name})");
                 _ = App.DeckController.SendShowAlert(Context);

@@ -86,6 +86,7 @@ namespace PilotsDeck.Actions.Advanced
         {
             DeregisterRessources();
 
+            bool settingsInitialized = false;
             try
             {
                 Settings = SettingsModelMeta.Create(sdEvent, out bool updated);
@@ -117,6 +118,8 @@ namespace PilotsDeck.Actions.Advanced
                     Settings.SetSize(CanvasSize);
                     SettingModelUpdated = true;
                 }
+
+                settingsInitialized = true;
             }
             catch (Exception ex)
             {
@@ -131,7 +134,10 @@ namespace PilotsDeck.Actions.Advanced
             if (Settings.IsNewModel)
             {
                 Settings.IsNewModel = false;
-                SettingModelUpdated = true;
+                if (settingsInitialized)
+                    SettingModelUpdated = true;
+                else
+                    SettingModelUpdated = false;
             }
 
             RegisterRessources();
@@ -498,7 +504,7 @@ namespace PilotsDeck.Actions.Advanced
                 if (actionCmd.CompareConditions())
                 {
                     commands.Add(actionCmd.GetSimCommand(Context, (sdCommand != StreamDeckCommand.KEY_DOWN && sdCommand != StreamDeckCommand.DIAL_DOWN), ticks,
-                        (sdCommand == StreamDeckCommand.DIAL_LEFT || sdCommand == StreamDeckCommand.DIAL_RIGHT || sdCommand == StreamDeckCommand.TOUCH_TAP)));
+                        (sdCommand == StreamDeckCommand.DIAL_LEFT || sdCommand == StreamDeckCommand.DIAL_RIGHT || sdCommand == StreamDeckCommand.DIAL_LEFT_PRESSED || sdCommand == StreamDeckCommand.DIAL_RIGHT_PRESSED || sdCommand == StreamDeckCommand.TOUCH_TAP)));
                     if (ActionDelays[sdCommand] > 0)
                         commands.Add(new DelayCommand(ActionDelays[sdCommand]));
                 }
@@ -565,7 +571,14 @@ namespace PilotsDeck.Actions.Advanced
         public virtual SimCommand[] OnDialRotate(StreamDeckEvent sdEvent)
         {
             HasStreamDeckInteraction = true;
-            StreamDeckCommand sdCommand = sdEvent.payload.ticks > 0 ? StreamDeckCommand.DIAL_RIGHT : StreamDeckCommand.DIAL_LEFT;
+            StreamDeckCommand sdCommand;
+
+            if (sdEvent.payload.pressed && sdEvent.payload.ticks > 0 && !ActionCommands[StreamDeckCommand.DIAL_RIGHT_PRESSED].IsEmpty)
+                sdCommand = StreamDeckCommand.DIAL_RIGHT_PRESSED;
+            else if (sdEvent.payload.pressed && sdEvent.payload.ticks < 0 && !ActionCommands[StreamDeckCommand.DIAL_LEFT_PRESSED].IsEmpty)
+                sdCommand = StreamDeckCommand.DIAL_LEFT_PRESSED;
+            else
+                sdCommand = sdEvent.payload.ticks > 0 ? StreamDeckCommand.DIAL_RIGHT : StreamDeckCommand.DIAL_LEFT;
 
             return GetUntimedCommands(sdCommand, sdEvent.payload.ticks);
         }

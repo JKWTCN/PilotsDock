@@ -54,6 +54,8 @@ namespace PilotsDeck.UI.Converter
             { StreamDeckCommand.DIAL_UP, Img.GetAssemblyImage("CommandDialUp")  },
             { StreamDeckCommand.DIAL_LEFT, Img.GetAssemblyImage("CommandDialLeft")  },
             { StreamDeckCommand.DIAL_RIGHT, Img.GetAssemblyImage("CommandDialRight")  },
+            { StreamDeckCommand.DIAL_LEFT_PRESSED, Img.GetAssemblyImage("CommandDialLeftPressed")  },
+            { StreamDeckCommand.DIAL_RIGHT_PRESSED, Img.GetAssemblyImage("CommandDialRightPressed")  },
             { StreamDeckCommand.TOUCH_TAP, Img.GetAssemblyImage("CommandTouchTap")  },
         };
 
