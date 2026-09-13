@@ -21,7 +21,7 @@ namespace PilotsDeck.Actions.Advanced.Elements
         public override bool HasChanges()
         {
             return base.HasChanges() || (Settings.UseGaugeDynamicSize && GaugeSizeVariable?.IsChanged == true);
-        }        
+        }
 
         protected override void Render(Renderer render)
         {
@@ -33,7 +33,7 @@ namespace PilotsDeck.Actions.Advanced.Elements
 
         protected virtual void RenderBar(Renderer render)
         {
-            RenderBar renderBar = new(Settings, GaugeValue, render);
+            RenderBar renderBar = new(this, Settings, GaugeValue, render);
 
             if (Settings.GaugeRevereseDirection)
                 render.MirrorX(Position);
@@ -78,7 +78,7 @@ namespace PilotsDeck.Actions.Advanced.Elements
 
         protected virtual void RenderArc(Renderer render)
         {
-            RenderArc renderArc = new(Settings, GaugeValue, render);
+            RenderArc renderArc = new(this, Settings, GaugeValue, render);
 
             if (Settings.GaugeRevereseDirection)
             {

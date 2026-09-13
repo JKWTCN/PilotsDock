@@ -1,4 +1,5 @@
 ﻿using CFIT.AppTools;
+using PilotsDeck.Actions.Advanced.Elements;
 using PilotsDeck.Actions.Advanced.SettingsModel;
 using PilotsDeck.Actions.Simple;
 using System.Drawing;
@@ -69,12 +70,12 @@ namespace PilotsDeck.Plugin.Render
             MaximumValue = Conversion.ToFloat(settings.MaximumValue, 100);
         }
 
-        public RenderArc(ModelDisplayElement settings, float value, Renderer render)
+        public RenderArc(DisplayElement element, ModelDisplayElement settings, float value, Renderer render)
         {
             Renderer = render;
-            Radius = settings.Size[0];
-            Width = settings.Size[1];
-            Offset = new (settings.Position[0], settings.Position[1]);
+            Radius = element.Size.X;
+            Width = element.Size.Y;
+            Offset = new(element.Position.X, element.Position.Y);
             StartAngle = settings.GaugeAngleStart;
             SweepAngle = settings.GaugeAngleSweep;
             DeviceCanvas = render.DeviceCanvas;
@@ -142,7 +143,7 @@ namespace PilotsDeck.Plugin.Render
             if (flip)
                 image.RotateFlip(RotateFlipType.RotateNoneFlipY);
             Renderer.RotateCenter(-angle, Offset);
-            
+
         }
 
         public void DrawArcIndicatorCircle(Color drawColor, float size, float lineSize, float offset, bool bottom = false)
@@ -253,7 +254,7 @@ namespace PilotsDeck.Plugin.Render
             float rangeAngleStart;
             float rangeAngleSweep;
             float ratioSweep;
-            float fix =  1.1f;
+            float fix = 1.1f;
             if (SweepAngle < 0)
                 fix *= -1;
 

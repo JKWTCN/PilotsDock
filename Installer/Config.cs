@@ -1,5 +1,4 @@
 ﻿using CFIT.AppLogger;
-using CFIT.AppTools;
 using CFIT.Installer.LibFunc;
 using CFIT.Installer.Product;
 using Installer.Worker;
@@ -14,7 +13,6 @@ namespace Installer
         //InstallerOptions
         public virtual bool IgnoreMsfs2020 { get; set; } = false;
         public virtual bool IgnoreMsfs2024 { get; set; } = false;
-        public virtual int InstallTarget { get; set; } = 0; // 0 => StreamDeck | 1 => StreamDock
         public virtual string ProfileManagerName { get { return "Profile Manager"; } }
         public virtual string ProfileManagerExePath { get { return Path.Combine(ProductPath, $"{ProfileManagerName.Replace(" ", "")}.exe"); } }
         public virtual bool Fsuipc7UseSecondaryConfig { get; set; } = true;
@@ -22,7 +20,6 @@ namespace Installer
         public static readonly string OptionFsuipc7UseSecondary = "Fsuipc7UseSecondary";
         public static readonly string OptionVjoyInstallUpdate = "VjoyInstallUpdate";
         public static readonly string OptionResetConfiguration = "ResetConfiguration";
-        public static readonly string OptionInstallTarget = "InstallTarget";
 
         //ConfigBase
         public override string ProductName { get { return PluginBinary; } }
@@ -32,33 +29,18 @@ namespace Installer
         public virtual string ProductColorFile { get { return $"ColorStore.json"; } }
         public override string ProductConfigPath { get { return Path.Combine(ProductPath, ProductConfigFile); } }
         public override string ProductExePath { get { return Path.Combine(ProductPath, ProductExe); } }
-        public override string ProductPath { get { return Path.Combine(TargetPluginPath, "com.extension.pilotsdeck.sdPlugin"); } }
-        public static string DockPluginPath { get { return $@"{Sys.FolderAppDataRoaming()}\HotSpot\StreamDock\Plugins"; } }
+        public override string ProductPath => DeckPluginProductPath;
         public static string DeckPluginProductPath => Path.Combine(FuncStreamDeck.DeckPluginPath, "com.extension.pilotsdeck.sdPlugin");
-        public static string DockPluginProductPath => Path.Combine(DockPluginPath, "com.extension.pilotsdeck.sdPlugin");
         public static bool IsInstalledStreamDeck => Directory.Exists(DeckPluginProductPath);
-        public static bool IsInstalledStreamDock => Directory.Exists(DockPluginProductPath);
-        public virtual string TargetPluginPath
-        {
-            get
-            {
-                int target = GetOption<int>(OptionInstallTarget);
-
-                if (target == 1)
-                    return DockPluginPath;
-                else
-                    return FuncStreamDeck.DeckPluginPath;
-            }
-        }
         public virtual string ProductPathProfiles { get { return Path.Combine(ProductPath, "Profiles"); } }
         public virtual string ProductPathScripts { get { return Path.Combine(ProductPath, "Scripts"); } }
 
         //Worker: .NET
         public virtual bool NetRuntimeDesktop { get; set; } = true;
-        public virtual string NetVersion { get; set; } = "10.0.11";
+        public virtual string NetVersion { get; set; } = "10.0.12";
         public virtual bool CheckMajorEqual { get; set; } = true;
-        public virtual string NetUrl { get; set; } = "https://builds.dotnet.microsoft.com/dotnet/WindowsDesktop/10.0.11/windowsdesktop-runtime-10.0.11-win-x64.exe";
-        public virtual string NetInstaller { get; set; } = "windowsdesktop-runtime-10.0.11-win-x64.exe";
+        public virtual string NetUrl { get; set; } = "https://builds.dotnet.microsoft.com/dotnet/WindowsDesktop/10.0.12/windowsdesktop-runtime-10.0.12-win-x64.exe";
+        public virtual string NetInstaller { get; set; } = "windowsdesktop-runtime-10.0.12-win-x64.exe";
 
         //Worker: MobiFlight
         public virtual bool MobiRequired { get; set; } = true;
@@ -120,12 +102,6 @@ namespace Installer
 
             //ResetConfig
             SetOption(OptionResetConfiguration, false);
-
-            //Install Target
-            if (Directory.Exists(DockPluginProductPath) && !Directory.Exists(FuncStreamDeck.DeckPluginPath))
-                SetOption(OptionInstallTarget, 1);
-            else
-                SetOption(OptionInstallTarget, 0);
 
             SetOption(OptionResetConfiguration, false);
         }

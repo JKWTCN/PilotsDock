@@ -91,11 +91,11 @@ namespace PilotsDeck.Actions.Simple
 
         public override void Refresh()
         {
-             if (!RessourceStore.HasChanges() && !NeedRefresh)
+            if (!RessourceStore.HasChanges() && !NeedRefresh)
                 return;
 
             var stateGauge = RessourceStore.GetState(VariableID.Gauge);
-            
+
             Renderer render = new(CanvasInfo);
             if (Settings.UseImageMapping)
                 render.DrawImage(RessourceStore.GetImageMap(ImageID.Map)?.GetMappedImage(stateGauge.StringValue, null) ?? ImageManager.DEFAULT_WAIT, Settings.GetRectangleBackground(), CenterType.BOTH, ScaleType.DEFAULT_KEEP);

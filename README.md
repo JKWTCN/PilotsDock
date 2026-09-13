@@ -16,9 +16,9 @@ If you don't: be eager to read & learn! 😅 I'll try to give some Background in
 
 **Note**: PilotsDeck is 100% free and Open-Source. The Software and the Developer do **not have any Affiliation to Flight Panels**. You basically spend Money instead of Time to let a Power-User create the Profile(s) for you. That is totally fine - *IF* you knew you had the Option. Choose the Approach that suits you best! 😃<br/><br/>
 
-**DEPRECATION NOTICE**
-Support for MiraBox/HotSpot Devices will be removed!
-Use the [PilotsDock-Fork](https://github.com/JKWTCN/PilotsDock/releases) by JKWTCN for these Devices 👍 <br/><br/>
+**StreamDeck Clones**
+This Plugin only supports Elegato's StreamDeck and there are no Plans to change this!<br/>
+For MiraBox/HotSpot Devices you can use JKWTCN's [PilotsDock-Fork](https://github.com/JKWTCN/PilotsDock/releases) 👍 <br/><br/>
 
 User-Contributed and my Profiles for specific Planes are shared/linked under [Integrations](Integrations/). Since there aren't that many: If your Plane is not among these, they can at least serve as Example on what you could do:<br/>
 <img src="img/Example01XL.jpg" width="420"><br/>
@@ -374,7 +374,7 @@ Using virtual Joysticks is really a great Feature and Solution for specific Use-
 
 
 #### AVAR
-| Command & Variable | MSFS | `(Prefix:Name(:index), Unit)` |
+| Command & Variable | MSFS | `(Prefix:Name(:index), Unit) \| (Prefix:Name:'Named_Index'_n, Unit)` |
 | --- | --- | --- |
 
 - *Prefix*: The Prefix for the Variable: `A:` for Simulation Variables, `E:` for Enviroment Variables, `L:` for Local Variables (L-Vars)
@@ -388,6 +388,7 @@ Using virtual Joysticks is really a great Feature and Solution for specific Use-
 - `(A:LIGHT POTENTIOMETER:13, percent over 100)` - Reading Index *13* of the A-Var *LIGHT POTENTIOMETER* as *Percent over 100* Value (0.0 - 1.0).
 - `(L:FCU_HEADING, Degree)` - Reading the L-Var *FCU_HEADING* using *Degree* as Unit.
 - `(E:ZULU TIME, number)` - Reading the Enviroment Variable *ZULU TIME*.
+- `(A:ELECTRICAL BUS VOLTAGE:'Bus_1'_n, Volts)` - Read the Named Index *Bus_1* from the *ELECTRICAL BUS VOLTAGE* Variable
 
 Before you use an A-Var as **Command**, make sure that it is writeable (some are read-only)! When used as Command, you need to specify the **On Value** and the **Off Value**. The Plugin will toggle between these two Values and writes them to the Variable. Use only 1 or 0 for Booleans.<br/>
 In addition to writing plain Values, the Plugin can also do simple Operations like increasing/decreasing the Value or toggling the Value in a defined Sequence. Look under [Command Options](#212---command-options) for Details.<br/><br/>

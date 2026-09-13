@@ -32,7 +32,7 @@ namespace PilotsDeck.Tools
         public static readonly Regex rxDref = new($"^(({validNameXP}[\\x2F]){{1}}({validNameMultipleXP}[\\x2F])*{validNameMultipleXP}){{1}}(([\\x5B][0-9]+[\\x5D])|(:s[0-9]+)){{0,1}}$", RegexOptions.Compiled);
         public static readonly string validPathXP = $"({validNameXP}[\\x2F]){{1}}({validNameMultipleXP}[\\x2F])*({validNameMultipleXP}){{1}}";
         public static readonly Regex rxCmdXP = new($"^({validPathXP}){{1}}(:{validPathXP})*$", RegexOptions.Compiled);
-        public static readonly Regex rxAvar = new(@"^\(((A|E|L):){0,1}([\w][\w ]+(:\d+){0,1}),\s{0,1}([\w][\w/ ]+)\)$", RegexOptions.Compiled);
+        public static readonly Regex rxAvar = new(@"^\(((A|E|L):){0,1}([\w][\w ]+(:\d+|:'\w+'_n){0,1}),\s{0,1}([\w][\w/ ]+)\)$", RegexOptions.Compiled);
         public static readonly Regex rxBvarValue = new($"^(B:{validName}){{1}}$", RegexOptions.Compiled);
         public static readonly string validBvarCmd = $"((B:){{0,1}}{validName}(:[-+]?[0-9]+([,.]{{1}}[0-9]+)?){{0,1}}){{1}}";
         public static readonly Regex rxBvarCmd = new($"^({validBvarCmd}){{1}}(:{validBvarCmd})*$", RegexOptions.Compiled);
