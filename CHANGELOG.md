@@ -1,31 +1,32 @@
 # Changelog
-## PilotsDock upstream merge (2026-09-20)
+
+## PilotsDock v0.9.5.0 (2026-09-20)
 
 - Merged PilotsDeck master through 33412bf (v0.9.5).
 - Retained StreamDock installation, Knob rendering, N4 touch handling, and existing localization.
 - Rebuilt the customized CFIT packages as 2026.263.14.1126 after merging upstream 517ebaf, and updated all PilotsDock CFIT references; StreamDock support, localization, and build timestamp parsing are retained.
-- Retained the existing PilotsDock installer payload, version metadata, and executable; these must be regenerated together when building a release.
-- The upstream release notes below describe PilotsDeck; removal of StreamDock support does not apply to this fork.
+- Updated the installer payload, version metadata, and packaged installer to 0.9.5.0 (build 2026.09.20.0634).
+- The v0.9.5 changes below apply to PilotsDock. Earlier sections are upstream PilotsDeck release history; their Elgato installer targets and original StreamDock limitations do not describe the current fork.
 
+### Changes imported from PilotsDeck v0.9.5
 
+#### Plugin
 
-## v0.9.5
-
-### Plugi
 - Added Named Indexes for A-Vars (SimVars) like (A:ELECTRICAL BUS VOLTAGE:'Bus_1'_n, Volts)
 - Fixed Size/Position Manipulator not being applied to Gauge Element (Composite Action)
 - Updated NuGet Packages
 - Updated MSFS SimConnect SDK
 
+#### Installer
 
-### Installer
-- Removed HotSpot/StreamDock as Install Target (use JKWTCN's [PilotsDock-Fork](https://github.com/JKWTCN/PilotsDock/releases))
+- Preserved MiraBox/HotSpot StreamDock as the installation target, including stopping and restarting StreamDock during installation. The upstream removal of this target was not adopted.
 - Set .NET 10.0.12 as Target
 
-<br/><br/>
-## v0.9.4
+
+## Upstream PilotsDeck v0.9.4 (historical reference)
 
 ### Plugin
+
 - Added Feature to assign separate Sim Commands for turning Dials while pressed
   - If not assigned, the Actions will behave like before (normal Rotate Commands are executed regardless if the Dial is pressed or not)
   - When assigned, it is not recommended to assign a Sim Command for the Dial Push (DOWN/UP) - these will still be executed on a pressed turn
@@ -33,30 +34,32 @@
 - Updated NuGet Packages
 - Updated MSFS SimConnect SDK
 
-
 ### Installer
+
 - Set StreamDeck SW 7.5.1 as Target
 - Set .NET 10.0.11 as Target
 
-<br/><br/>
-## v0.9.3
+
+## Upstream PilotsDeck v0.9.3 (historical reference)
 
 ### Plugin
+
 - Made Encoder Check case-insensitive
 - Added missing Elgato Device Types (i.e. StreamDeckXLPlus)
 - Default to 144x144 Pixels Canvas on StreamDeckVirtual and StreamDeckXLPlus
 - Updated NuGet Packages
 - Updated MSFS SimConnect SDK
 
-
 ### Installer
+
 - Set StreamDeck SW 7.5.0 as Target
 - Set .NET 10.0.10 as Target
 
-<br/><br/>
-## v0.9.2
+
+## Upstream PilotsDeck v0.9.2 (historical reference)
 
 ### Plugin
+
 - Fixed missing Lua Globals/Functions in Global Scripts
 - Fixed Profile Switch being executed although disabled (when the Plugin is started while already in Sim Session)
 - Fixed Session Init not working on XP12 when not using WebAPI and starting the Plugin while a Session is running
@@ -65,14 +68,16 @@
 - Updated SimConnect & Libraries
 
 ### Installer
+
 - Set .NET 10.0.8 as Target
 - Set FSUIPC 7.5.7 as Target
 - Set StreamDeck 7.4.2 as Target
 
-<br/><br/>
-## v0.9.1
+
+## Upstream PilotsDeck v0.9.1 (historical reference)
 
 ### Plugin
+
 - DEPRECATION NOTICE: Using RPN Code as Variable (aka 'C-Var') is now considered deprecated!
   - The Plugin still allows Usage - existing Actions continue to work
   - Adding C-Var(s) to an Action is still allowed, but the Plugin will mark them as 'invalid Syntax'
@@ -99,6 +104,7 @@
 - Changed: Rework of the Plugin and Library Code mixing up async and non async Code
 
 ### Installer
+
 - Added: Support (in GUI) to Install the Plugin to "HotSpot StreamDock" - Contribution by @JKWTCN
   - PilotsDeck still is and will be primarily a Stream*Deck* Plugin
   - Advanced Features like Profile Mapping/Switching and Package Installation only work for StreamDeck Software
@@ -108,15 +114,15 @@
 - Changed: Set .NET 10.0.6 as Target
 
 ### Profile Manager
+
 - Added: New Field 'removefiles' in package.json to remove outdated Files of the Package (Scripts and Images)
 - Fixed: Profile Manager not installing Packages when passed through Commandline
 
 ### General
+
 - New Release/Update Approach: there will be *only* Build from now on. No more Dev vs Release, it will always the "latest"
   - There will be a (Github) Release called "latest" always being updated when Changes are pushed
   - The PilotsDeck-Installer-latest.exe in the Project Files can still be used - it is the same Thing
   - Recent Changes are now tracked in CHANGES.md (which will also be added the Description of the "latest" Release)
   - When the Version increases, the Changes will be added to the CHANGELOG.md
   - The Installer will be scanned by VirusTotal every Time an Update is pushed - in Case you need a second Opinion on your Scanner saying its Malware ;)
-
-<br/><br/>
