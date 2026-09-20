@@ -21,14 +21,14 @@ namespace PilotsDeck.Actions.Advanced.SettingsModel
 
             if (ActionCommands.Count == 0)
             {
-                foreach (StreamDeckCommand type in Enum.GetValues(typeof(StreamDeckCommand)))
+                foreach (StreamDeckCommand type in Enum.GetValues<StreamDeckCommand>())
                     ActionCommands.Add(type, []);
                 result = true;
             }
 
             if (ActionDelays.Count == 0)
             {
-                foreach (StreamDeckCommand type in Enum.GetValues(typeof(StreamDeckCommand)))
+                foreach (StreamDeckCommand type in Enum.GetValues<StreamDeckCommand>())
                     ActionDelays.Add(type, App.Configuration.InterActionDelay);
                 result = true;
             }
@@ -66,8 +66,23 @@ namespace PilotsDeck.Actions.Advanced.SettingsModel
                 if (settings.BUILD_VERSION < 8)
                 {
                     foreach (var type in settings.ActionCommands.Values)
-                        foreach(var command in type)
+                        foreach (var command in type)
                             command.Value.UseXpCommandOnce = true;
+                }
+
+                if (settings.BUILD_VERSION < 11)
+                {
+                    if (!settings.ActionCommands.ContainsKey(StreamDeckCommand.DIAL_LEFT_PRESSED) || !settings.ActionCommands.ContainsKey(StreamDeckCommand.DIAL_RIGHT_PRESSED))
+                    {
+                        settings.ActionCommands.TryAdd(StreamDeckCommand.DIAL_LEFT_PRESSED, []);
+                        settings.ActionCommands.TryAdd(StreamDeckCommand.DIAL_RIGHT_PRESSED, []);
+                    }
+
+                    if (!settings.ActionDelays.ContainsKey(StreamDeckCommand.DIAL_LEFT_PRESSED) || !settings.ActionDelays.ContainsKey(StreamDeckCommand.DIAL_RIGHT_PRESSED))
+                    {
+                        settings.ActionDelays.TryAdd(StreamDeckCommand.DIAL_LEFT_PRESSED, App.Configuration.InterActionDelay);
+                        settings.ActionDelays.TryAdd(StreamDeckCommand.DIAL_RIGHT_PRESSED, App.Configuration.InterActionDelay);
+                    }
                 }
 
                 Logger.Information($"Converted Settings for '{sdEvent.context}' from Version {settings.BUILD_VERSION} to {AppConfiguration.BuildModelVersion}");

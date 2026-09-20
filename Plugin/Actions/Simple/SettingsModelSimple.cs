@@ -70,7 +70,7 @@ namespace PilotsDeck.Actions.Simple
         }
 
         public virtual RectangleF GetRectangleFirst()
-        { 
+        {
             return GetRectangleF(RectCoord);
         }
 
@@ -193,6 +193,17 @@ namespace PilotsDeck.Actions.Simple
         public virtual SimCommandType ActionTypeRight { get; set; } = SimCommandType.LVAR;
         public virtual string SwitchOnStateRight { get; set; } = "";
         public virtual string SwitchOffStateRight { get; set; } = "";
+
+        //Rotate Pressed Controls
+        public virtual string AddressActionLeftPressed { get; set; } = "";
+        public virtual SimCommandType ActionTypeLeftPressed { get; set; } = SimCommandType.LVAR;
+        public virtual string SwitchOnStateLeftPressed { get; set; } = "";
+        public virtual string SwitchOffStateLeftPressed { get; set; } = "";
+
+        public virtual string AddressActionRightPressed { get; set; } = "";
+        public virtual SimCommandType ActionTypeRightPressed { get; set; } = SimCommandType.LVAR;
+        public virtual string SwitchOnStateRightPressed { get; set; } = "";
+        public virtual string SwitchOffStateRightPressed { get; set; } = "";
 
         //Touch Control
         public virtual string AddressActionTouch { get; set; } = "";

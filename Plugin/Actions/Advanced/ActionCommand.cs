@@ -13,7 +13,7 @@ namespace PilotsDeck.Actions.Advanced
     {
         public ModelCommand Settings { get; set; } = model;
         public StreamDeckCommand DeckCommandType { get; set; } = model.DeckCommandType;
-        public bool IsEncoder { get { return DeckCommandType == StreamDeckCommand.DIAL_LEFT || DeckCommandType == StreamDeckCommand.DIAL_RIGHT || DeckCommandType == StreamDeckCommand.TOUCH_TAP; } }
+        public bool IsEncoder { get { return DeckCommandType == StreamDeckCommand.DIAL_LEFT || DeckCommandType == StreamDeckCommand.DIAL_RIGHT || DeckCommandType == StreamDeckCommand.DIAL_LEFT_PRESSED || DeckCommandType == StreamDeckCommand.DIAL_RIGHT_PRESSED || DeckCommandType == StreamDeckCommand.TOUCH_TAP; } }
         public SimCommandType CommandType { get; set; } = model.CommandType;
         public bool DoNotRequestBvar { get; set; } = model.DoNotRequestBvar;
         public bool UseXpCommandOnce { get; set; } = model.UseXpCommandOnce;

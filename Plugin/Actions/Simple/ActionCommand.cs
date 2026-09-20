@@ -277,5 +277,51 @@ namespace PilotsDeck.Actions.Simple
 
             return command;
         }
+
+        public static ActionCommand CreateLeftPressed(SettingsModelSimple settingsModel, RessourceStore store)
+        {
+            if (string.IsNullOrWhiteSpace(settingsModel.AddressActionLeftPressed))
+                return null;
+
+            ActionCommand command = new()
+            {
+                AddressOn = new ManagedAddress(settingsModel.AddressActionLeftPressed, settingsModel.ActionTypeLeftPressed, settingsModel.DoNotRequestBvar),
+                CommandType = settingsModel.ActionTypeLeftPressed,
+                HoldSwitch = false,
+                ToggleSwitch = false,
+                ResetSwitch = GetResetState(settingsModel, settingsModel.ActionTypeLeftPressed, settingsModel.DoNotRequestBvar),
+                UseCommandDelay = settingsModel.UseControlDelay,
+                DoNotRequestBvar = settingsModel.DoNotRequestBvar,
+                UseXpCommandOnce = true,
+            };
+
+            if (command.IsValueType)
+                command.State = new(store.AddVariable(VariableID.SwitchLeftPressed, settingsModel.AddressActionLeftPressed), settingsModel.SwitchOnStateLeftPressed, settingsModel.SwitchOffStateLeftPressed, command);
+
+            return command;
+        }
+
+        public static ActionCommand CreateRightPressed(SettingsModelSimple settingsModel, RessourceStore store)
+        {
+            if (string.IsNullOrWhiteSpace(settingsModel.AddressActionRightPressed))
+                return null;
+
+            ActionCommand command = new()
+            {
+                AddressOn = new ManagedAddress(settingsModel.AddressActionRightPressed, settingsModel.ActionTypeRightPressed, settingsModel.DoNotRequestBvar),
+                CommandType = settingsModel.ActionTypeRightPressed,
+                HoldSwitch = false,
+                ToggleSwitch = false,
+                ResetSwitch = GetResetState(settingsModel, settingsModel.ActionTypeRightPressed, settingsModel.DoNotRequestBvar),
+                UseCommandDelay = settingsModel.UseControlDelay,
+                DoNotRequestBvar = settingsModel.DoNotRequestBvar,
+                UseXpCommandOnce = true,
+            };
+
+            if (command.IsValueType)
+                command.State = new(store.AddVariable(VariableID.SwitchRightPressed, settingsModel.AddressActionRightPressed), settingsModel.SwitchOnStateRightPressed, settingsModel.SwitchOffStateRightPressed, command);
+
+            return command;
+        }
     }
 }

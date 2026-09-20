@@ -1,4 +1,5 @@
 ﻿using CFIT.AppTools;
+using PilotsDeck.Actions.Advanced.Elements;
 using PilotsDeck.Actions.Advanced.SettingsModel;
 using PilotsDeck.Actions.Simple;
 using System.Drawing;
@@ -53,12 +54,12 @@ namespace PilotsDeck.Plugin.Render
             MaximumValue = Conversion.ToFloat(settings.MaximumValue, 100);
         }
 
-        public RenderBar(ModelDisplayElement settings, float value, Renderer render)
+        public RenderBar(DisplayElement element, ModelDisplayElement settings, float value, Renderer render)
         {
             Renderer = render;
-            Width = settings.Size[0];
-            Height = settings.Size[1];
-            Offset = new(settings.Position[0], settings.Position[1]);
+            Width = element.Size.X;
+            Height = element.Size.Y;
+            Offset = new(element.Position.X, element.Position.Y);
             DeviceCanvas = render.DeviceCanvas;
             DefaultScalar = new(1, 1);
             IsSquareCanvas = true;
@@ -223,7 +224,7 @@ namespace PilotsDeck.Plugin.Render
 
             float rangeStart, rangeWidth;
             float fix = 0.5f;
-            
+
             for (int i = 0; i < ranges.Length; i++)
             {
                 rangeStart = ToolsRender.NormalizedRatio(ranges[i][0], MinimumValue, MaximumValue) * drawParams.Width;

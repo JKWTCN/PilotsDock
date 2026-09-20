@@ -113,7 +113,8 @@ namespace PilotsDeck.Actions.Simple
 
         public override SimCommand[] OnKeyUp(StreamDeckEvent sdEvent)
         {
-            SetIndication();
+            if (!IsEncoder || !HasDialPressCommands())
+                SetIndication();
 
             return base.OnKeyUp(sdEvent);
         }
@@ -140,7 +141,7 @@ namespace PilotsDeck.Actions.Simple
 
                 if (RessourceStore.GetState(VariableID.Active)?.Variable?.IsChanged == true && !IndicationActive && !NeedRefresh)
                     SetIndication();
-                
+
                 ManagedImage background = (IndicationActive ? RessourceStore.GetImage(ImageID.Indication) : RessourceStore.GetImage(ImageID.Background));
                 Font fontAct = GetFont(FontStyle.Bold);
                 Font fontStb = GetFont(FontStyle.Regular);

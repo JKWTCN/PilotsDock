@@ -26,7 +26,7 @@ namespace PilotsDeck.Actions.Advanced.Manipulators
             float value = (float)(IndicatorVariable?.NumericValue ?? 0.0) * Settings.IndicatorScale;
             if (!Element.Settings.GaugeIsArc)
             {
-                RenderBar renderBar = new(Element.Settings, value, render);
+                RenderBar renderBar = new(Element, Element.Settings, value, render);
                 if (Settings.IndicatorReverse)
                     render.MirrorX(Element.Position);
 
@@ -40,13 +40,13 @@ namespace PilotsDeck.Actions.Advanced.Manipulators
                     renderBar.DrawBarIndicatorImage(IndicatorImage.GetImageVariant(render.PreferredVariant), Settings.IndicatorSize, Settings.IndicatorOffset, Settings.IndicatorFlip);
                 else
                     renderBar.DrawBarIndicatorTriangle(Settings.GetIndicatorColor(), Settings.IndicatorSize, Settings.IndicatorOffset, Settings.IndicatorFlip);
-                
+
                 if (Settings.IndicatorReverse)
                     render.MirrorX(Element.Position);
             }
             else
             {
-                RenderArc renderArc = new(Element.Settings, value, render);
+                RenderArc renderArc = new(Element, Element.Settings, value, render);
                 if (Settings.IndicatorReverse)
                 {
                     renderArc.StartAngle += renderArc.SweepAngle;
@@ -58,7 +58,7 @@ namespace PilotsDeck.Actions.Advanced.Manipulators
                 else if (Settings.IndicatorType == IndicatorType.DOT)
                     renderArc.DrawArcIndicatorFullCircle(Settings.GetIndicatorColor(), Settings.IndicatorSize, Settings.IndicatorOffset);
                 else if (Settings.IndicatorType == IndicatorType.LINE)
-                            renderArc.DrawArcIndicatorLine(Settings.GetIndicatorColor(), Settings.IndicatorSize, Settings.IndicatorLineSize, Settings.IndicatorOffset);
+                    renderArc.DrawArcIndicatorLine(Settings.GetIndicatorColor(), Settings.IndicatorSize, Settings.IndicatorLineSize, Settings.IndicatorOffset);
                 else if (Settings.IndicatorType == IndicatorType.IMAGE && IndicatorImage != null)
                     renderArc.DrawArcIndicatorImage(IndicatorImage.GetImageVariant(render.PreferredVariant), Settings.IndicatorSize, Settings.IndicatorOffset, Settings.IndicatorFlip);
                 else

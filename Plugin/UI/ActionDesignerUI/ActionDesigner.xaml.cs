@@ -26,11 +26,11 @@ namespace PilotsDeck.UI.ActionDesignerUI
 
         protected virtual ActionTreeView TreeViewElements { get; }
         [ObservableProperty]
-        protected bool _VisibilityElements = true;
+        public partial bool VisibilityElements { get; set; } = true;
         public virtual RelayCommand ToggleElementsCommand { get; }
         protected virtual ActionTreeView TreeViewCommands { get; }
         [ObservableProperty]
-        protected bool _VisibilityCommands = true;
+        public partial bool VisibilityCommands { get; set; } = true;
         public virtual RelayCommand ToggleCommandsCommand { get; }
         protected virtual double TreeSizeOffset { get; set; } = 144.0;
         protected virtual double ContentOffset { get; set; } = 56.0;
@@ -62,7 +62,7 @@ namespace PilotsDeck.UI.ActionDesignerUI
             ToggleCommandsCommand = new RelayCommand(() => VisibilityCommands = !VisibilityCommands);
             TreeViewElements = new ActionTreeView(ModelAction, ModelAction.Elements);
             TreeViewCommands = new ActionTreeView(ModelAction, ModelAction.Commands);
-            
+
             InitializeTreeViews();
             InitializeSubscribtions();
             ResizeContent();
@@ -72,7 +72,7 @@ namespace PilotsDeck.UI.ActionDesignerUI
         protected virtual void InitializeSubscribtions()
         {
             this.Activated += Window_Activated;
-            this.Loaded += (_, _) => { ModelAction.NotifyPropertyChanged(nameof(CurrentItem)); ResizeTrees(); ResizeContent();  };
+            this.Loaded += (_, _) => { ModelAction.NotifyPropertyChanged(nameof(CurrentItem)); ResizeTrees(); ResizeContent(); };
             this.SizeChanged += (_, _) => { ResizeTrees(); ResizeContent(); };
             this.Closing += Window_Closing;
             this.PropertyChanged += Self_PropertyChanged;

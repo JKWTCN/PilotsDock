@@ -118,6 +118,8 @@ function fillActionSelectBoxes(actionList) {
 	if (settingsModel.IsEncoder) {
 		fillTypeSelectBox(actionList, 'ActionTypeLeft', settingsModel.ActionTypeLeft);
 		fillTypeSelectBox(actionList, 'ActionTypeRight', settingsModel.ActionTypeRight);
+		fillTypeSelectBox(actionList, 'ActionTypeLeftPressed', settingsModel.ActionTypeLeftPressed);
+		fillTypeSelectBox(actionList, 'ActionTypeRightPressed', settingsModel.ActionTypeRightPressed);
 		fillTypeSelectBox(actionList, 'ActionTypeTouch', settingsModel.ActionTypeTouch);
 	}
 }
@@ -184,7 +186,7 @@ function setPattern(field, type, donotrequest) {
 	var strPathXP = `(${regNameXP}[\\x2F]){1}(${regNameMultipleXP}[\\x2F])*(${regNameMultipleXP}){1}`;
 	var regCmdXP = `^(${strPathXP}){1}(:${strPathXP})*$`;
 	var regOffset = "^((0x){0,1}[0-9A-Fa-f]{4}:[0-9]{1,4}((:[ifsa]{1}(:s)?)|(:b:[0-9]{1,2}))?){1}$";
-	var regAvar = `^\\([AEL]:[\\w][\\w ]+(:\\d+){0,1},\\s{0,1}([\\w][\\w ]+)\\)$`;
+	var regAvar = `^\\([AEL]:[\\w][\\w ]+((:\\d+)|(:'\\w+'_n)){0,1},\\s{0,1}([\\w][\\w ]+)\\)$`;
 	var regBvarValue = `^(B:${regName}){1}$`;
 	var strBvarCmd = `((B:){0,1}${regName}(:[\\x2D\\x2B]{0,1}[0-9]+([\\x2C\\x2E]{1}[0-9]+){0,1}){0,1}){1}`;
 	var regBvarCmd = `^(${strBvarCmd}){1}(:${strBvarCmd})*$`;
@@ -474,6 +476,8 @@ function commonFormUpdate() {
 		if (settingsModel.IsEncoder) {
 			setPattern('AddressActionLeft', settingsModel.ActionTypeLeft, settingsModel.DoNotRequestBvar);
 			setPattern('AddressActionRight', settingsModel.ActionTypeRight, settingsModel.DoNotRequestBvar);
+			setPattern('AddressActionLeftPressed', settingsModel.ActionTypeLeftPressed, settingsModel.DoNotRequestBvar);
+			setPattern('AddressActionRightPressed', settingsModel.ActionTypeRightPressed, settingsModel.DoNotRequestBvar);
 			setPattern('AddressActionTouch', settingsModel.ActionTypeTouch, settingsModel.DoNotRequestBvar);
 		}
 
@@ -491,6 +495,8 @@ function commonFormUpdate() {
 		if (settingsModel.IsEncoder) {
 			setActionFields('Left', settingsModel.ActionTypeLeft, settingsModel);
 			setActionFields('Right', settingsModel.ActionTypeRight, settingsModel);
+			setActionFields('LeftPressed', settingsModel.ActionTypeLeftPressed, settingsModel);
+			setActionFields('RightPressed', settingsModel.ActionTypeRightPressed, settingsModel);
 			setActionFields('Touch', settingsModel.ActionTypeTouch, settingsModel);
 		}
 	}

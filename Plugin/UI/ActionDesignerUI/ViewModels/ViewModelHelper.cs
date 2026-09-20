@@ -163,6 +163,8 @@ namespace PilotsDeck.UI.ActionDesignerUI.ViewModels
             { StreamDeckCommand.DIAL_UP, "Dial Up" },
             { StreamDeckCommand.DIAL_LEFT, "Dial Left" },
             { StreamDeckCommand.DIAL_RIGHT, "Dial Right" },
+            { StreamDeckCommand.DIAL_LEFT_PRESSED, "Dial Left Pressed" },
+            { StreamDeckCommand.DIAL_RIGHT_PRESSED, "Dial Right Pressed" },
             { StreamDeckCommand.TOUCH_TAP, "Touch Tap" },
         };
         public static Dictionary<StreamDeckCommand, string> DeckCommandTypes => DesignerLocalization.TranslateDictionary(DeckCommandTypesSource);

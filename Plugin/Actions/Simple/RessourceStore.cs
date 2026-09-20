@@ -15,7 +15,9 @@ namespace PilotsDeck.Actions.Simple
         SwitchLeft = 4,
         SwitchRight = 5,
         SwitchTouch = 6,
-        GuardCmd = 19
+        GuardCmd = 19,
+        SwitchLeftPressed = 20,
+        SwitchRightPressed = 21,
     }
 
     public enum VariableID
@@ -26,6 +28,8 @@ namespace PilotsDeck.Actions.Simple
         SwitchLong = 3,
         SwitchLeft = 4,
         SwitchRight = 5,
+        SwitchLeftPressed = 20,
+        SwitchRightPressed = 21,
         SwitchTouch = 6,
         Indication = 14,
         GuardMon = 18,
@@ -86,6 +90,12 @@ namespace PilotsDeck.Actions.Simple
                     break;
                 case SwitchID.SwitchRight:
                     command = ActionCommand.CreateRight(settingsModel, this);
+                    break;
+                case SwitchID.SwitchLeftPressed:
+                    command = ActionCommand.CreateLeftPressed(settingsModel, this);
+                    break;
+                case SwitchID.SwitchRightPressed:
+                    command = ActionCommand.CreateRightPressed(settingsModel, this);
                     break;
                 case SwitchID.SwitchTouch:
                     command = ActionCommand.CreateTouch(settingsModel, this);

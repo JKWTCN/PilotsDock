@@ -18,6 +18,9 @@ If you don't: be eager to read & learn! 😅 I'll try to give some Background in
 
 **Note**: PilotsDock is 100% free and Open-Source. The Software and the Developer do **not have any Affiliation to Flight Panels**. You basically spend Money instead of Time to let a Power-User create the Profile(s) for you. That is totally fine - *IF* you knew you had the Option. Choose the Approach that suits you best! 😃<br/><br/>
 
+**Device Support**
+PilotsDock supports MiraBox/HotSpot StreamDock devices. For Elgato StreamDeck, use the upstream [PilotsDeck project](https://github.com/Fragtality/PilotsDeck).<br/><br/>
+
 User-Contributed and my Profiles for specific Planes are shared/linked under [Integrations](Integrations/). Since there aren't that many: If your Plane is not among these, they can at least serve as Example on what you could do:<br/>
 <img src="img/Example01XL.jpg" width="420"><br/>
 <img src="img/ExampleLayout02.jpg" width="420"><br/>
@@ -103,7 +106,7 @@ On the second Installer Page are some Options to customize your Installation:
 - Desktop Icon to the Profile Manager App
 - Enable (and Check) FSUIPC7 as secondary Connector for MSFS
 - Install/Update the vJoy Driver
-- **Install Location**: Choose if the Plugin should be installed to Elegato StreamD**e**ck or MiraBox/HotSpot StreamD**o**ck
+- **Install Location**: The plugin is installed to MiraBox/HotSpot StreamDock.
   - :exclamation: This fork focuses on MiraBox/HotSpot StreamDock compatibility. StreamDeck support is retained where the original API behavior still applies.
 
 <br/>
@@ -127,10 +130,9 @@ The Requirements for the Plugin:
 
 <br/>
 
-Install Location for Elegato StreamDeck: `%appdata%\Elgato\StreamDeck\Plugins\com.extension.pilotsdeck.sdPlugin` <br/>
-Install Location for MiraBox/HotSpot StreamDock: `%appdata%\HotSpot\StreamDock\Plugins\com.extension.pilotsdeck.sdPlugin`
+Install Location for MiraBox/HotSpot StreamDock: `%appdata%\HotSpot\StreamDock\Plugins\com.mirabox.pilotsdock.sdPlugin` <br/>
 
-The Plugin is automatically started with the StreamDeck/Dock Software. It will spawn its own Icon in the System-Tray / Notification Area. Use this Icon to see if a Plugin Update is available, to access the [Developer UI](#32---developer-ui) or open the **Profile Manager** to configure [Profile Switching](#34---profile-switching).<br/>
+The Plugin is automatically started with the StreamDock Software. It will spawn its own Icon in the System-Tray / Notification Area. Use this Icon to see if a Plugin Update is available, to access the [Developer UI](#32---developer-ui) or open the **Profile Manager** to configure [Profile Switching](#34---profile-switching).<br/>
 <img src="img/Plugin-Systray.png" width="267"><br/><br/>
 
 **Note:** Since FSUIPC is only a "secondary" Connector for MSFS, you do not need to have it installed anymore (for MSFS). If you not plan to install/run FSUIPC7, uncheck the respective Option in the Installer!<br/>
@@ -192,17 +194,22 @@ Commands available on all Actions *except* the Composite Action:<br/>
 
 - Actions on Keypads have a **Main Command** and an optional **Second Command** when pressed longer (>= 500ms).
 - Actions on Encoders have the **Dial Left Command**, **Dial Right Command** and the **Touch Command** in Addition to Main and Second - these two will be used when you press the Encoder.
+- Actions on Encoders can have additional and different Commands assigned when the Dial is **turned when pressed** (Dial Left Pressed Command and Dial Right Pressed Command).
+  - When the Pressed Commands are not assigned, the (normal) Left/Right Commands are executed regardless if the Dial is pressed or not.
+  - It is not advised to map a Main or Second Command when the Left/Right Pressed Commands are mapped (maybe besides some special Use-Cases to track/prepare/cleanup some State when the Dial was pressed).
+  - Any assigned Main/Second Command is executed in any Case when the Dial is pressed (and released).
 - All Actions can have an optional **Guard Command** to be executed before the Main and Second Command.
 - The different Commands can each use a different Type, they don't need to be the same - the Main Command could be SCRIPT, the Left/Right Command could be CALCULATOR and the Touch Command LVAR for Example (but note that they share some Settings).
 
 <br/>
 Commands available on the Composite Action:<br/>
 
-- Every (Composite) Action always supports every StreamDeck Event (**KEY_DOWN, KEY_UP, DIAL_DOWN, DIAL_UP, DIAL_LEFT, DIAL_RIGHT, TOUCH_TAP**), regardless on which StreamDeck it is currently on.
+- Every (Composite) Action always supports every StreamDeck Event (**KEY_DOWN, KEY_UP, DIAL_DOWN, DIAL_UP, DIAL_LEFT, DIAL_RIGHT, TOUCH_TAP, DIAL_LEFT_PRESSED, DIAL_RIGHT_PRESSED**), regardless on which StreamDeck it is currently on.
 - You can **add every Command** the Plugin offers to **every Event** the StreamDeck sends. (But: adding a Command to DIAL_UP on a Keypad will do nothing, for example)
 - For **both _UP** Events, you can configure Commands to be only executed after an **individual Down-Time** - like the Second Command from the other Actions. *BUT*: you can have multiple of those with different Times!
 - Every Command can have one or more **Conditions**: The Command will only be run when all (or at least one) Condition is true. You can use **any Variable** the Plugin & Sim supports for these Conditions.
 - You can add **multiple Commands** per Event, they will be run in Sequence then with a configurable Delay per Event. (But only if their configured Conditions are met)
+- Regarding the Left/Right Pressed Commands, the same Statements and Recommendations apply: UP/DOWN should not be mapped (since they are executed in any Case) and if PRESSED is not mapped, the normal LEFT/RIGHT Command is executed
 
 <br/><br/>
 
@@ -368,7 +375,7 @@ Using virtual Joysticks is really a great Feature and Solution for specific Use-
 
 
 #### AVAR
-| Command & Variable | MSFS | `(Prefix:Name(:index), Unit)` |
+| Command & Variable | MSFS | `(Prefix:Name(:index), Unit) \| (Prefix:Name:'Named_Index'_n, Unit)` |
 | --- | --- | --- |
 
 - *Prefix*: The Prefix for the Variable: `A:` for Simulation Variables, `E:` for Enviroment Variables, `L:` for Local Variables (L-Vars)
@@ -382,6 +389,7 @@ Using virtual Joysticks is really a great Feature and Solution for specific Use-
 - `(A:LIGHT POTENTIOMETER:13, percent over 100)` - Reading Index *13* of the A-Var *LIGHT POTENTIOMETER* as *Percent over 100* Value (0.0 - 1.0).
 - `(L:FCU_HEADING, Degree)` - Reading the L-Var *FCU_HEADING* using *Degree* as Unit.
 - `(E:ZULU TIME, number)` - Reading the Enviroment Variable *ZULU TIME*.
+- `(A:ELECTRICAL BUS VOLTAGE:'Bus_1'_n, Volts)` - Read the Named Index *Bus_1* from the *ELECTRICAL BUS VOLTAGE* Variable
 
 Before you use an A-Var as **Command**, make sure that it is writeable (some are read-only)! When used as Command, you need to specify the **On Value** and the **Off Value**. The Plugin will toggle between these two Values and writes them to the Variable. Use only 1 or 0 for Booleans.<br/>
 In addition to writing plain Values, the Plugin can also do simple Operations like increasing/decreasing the Value or toggling the Value in a defined Sequence. Look under [Command Options](#212---command-options) for Details.<br/><br/>

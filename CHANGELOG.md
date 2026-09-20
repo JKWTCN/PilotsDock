@@ -1,6 +1,59 @@
 # Changelog
+## PilotsDock upstream merge (2026-09-20)
+
+- Merged PilotsDeck master through 33412bf (v0.9.5).
+- Retained StreamDock installation, Knob rendering, N4 touch handling, and existing localization.
+- Retained the locally customized CFIT package versions for StreamDock and localization compatibility; upstream CFIT dependency upgrades are deferred.
+- Retained the existing PilotsDock installer payload, version metadata, and executable; these must be regenerated together when building a release.
+- The upstream release notes below describe PilotsDeck; removal of StreamDock support does not apply to this fork.
 
 
+
+## v0.9.5
+
+### Plugi
+- Added Named Indexes for A-Vars (SimVars) like (A:ELECTRICAL BUS VOLTAGE:'Bus_1'_n, Volts)
+- Fixed Size/Position Manipulator not being applied to Gauge Element (Composite Action)
+- Updated NuGet Packages
+- Updated MSFS SimConnect SDK
+
+
+### Installer
+- Removed HotSpot/StreamDock as Install Target (use JKWTCN's [PilotsDock-Fork](https://github.com/JKWTCN/PilotsDock/releases))
+- Set .NET 10.0.12 as Target
+
+<br/><br/>
+## v0.9.4
+
+### Plugin
+- Added Feature to assign separate Sim Commands for turning Dials while pressed
+  - If not assigned, the Actions will behave like before (normal Rotate Commands are executed regardless if the Dial is pressed or not)
+  - When assigned, it is not recommended to assign a Sim Command for the Dial Push (DOWN/UP) - these will still be executed on a pressed turn
+- Fixed rare Condition of Composite Actions being reset when they encountered an Exception during Loading/Creation
+- Updated NuGet Packages
+- Updated MSFS SimConnect SDK
+
+
+### Installer
+- Set StreamDeck SW 7.5.1 as Target
+- Set .NET 10.0.11 as Target
+
+<br/><br/>
+## v0.9.3
+
+### Plugin
+- Made Encoder Check case-insensitive
+- Added missing Elgato Device Types (i.e. StreamDeckXLPlus)
+- Default to 144x144 Pixels Canvas on StreamDeckVirtual and StreamDeckXLPlus
+- Updated NuGet Packages
+- Updated MSFS SimConnect SDK
+
+
+### Installer
+- Set StreamDeck SW 7.5.0 as Target
+- Set .NET 10.0.10 as Target
+
+<br/><br/>
 ## v0.9.2
 
 ### Plugin

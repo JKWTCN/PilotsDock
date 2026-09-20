@@ -34,7 +34,9 @@
     <None Remove="UI\Icons\Collapsed.png" />
     <None Remove="UI\Icons\CommandDialDown.png" />
     <None Remove="UI\Icons\CommandDialLeft.png" />
+    <None Remove="UI\Icons\CommandDialLeftPressed.png" />
     <None Remove="UI\Icons\CommandDialRight.png" />
+    <None Remove="UI\Icons\CommandDialRightPressed.png" />
     <None Remove="UI\Icons\CommandDialUp.png" />
     <None Remove="UI\Icons\CommandKeyDown.png" />
     <None Remove="UI\Icons\CommandKeyUp.png" />
@@ -145,7 +147,9 @@
     <Resource Include="UI\Icons\Collapsed.png" />
     <Resource Include="UI\Icons\CommandDialDown.png" />
     <Resource Include="UI\Icons\CommandDialLeft.png" />
+    <Resource Include="UI\Icons\CommandDialLeftPressed.png" />
     <Resource Include="UI\Icons\CommandDialRight.png" />
+    <Resource Include="UI\Icons\CommandDialRightPressed.png" />
     <Resource Include="UI\Icons\CommandDialUp.png" />
     <Resource Include="UI\Icons\CommandKeyDown.png" />
     <Resource Include="UI\Icons\CommandKeyUp.png" />

@@ -54,7 +54,7 @@ namespace PilotsDeck.UI.ActionDesignerUI.ViewModels
         public virtual bool UseXpCommandOnce { get => GetSourceValue<bool>(); set { SetModelValue(value); NotifyTypeChange(); } }
         public virtual bool CanLongPress => Source.DeckCommandType == StreamDeckCommand.KEY_UP || Source.DeckCommandType == StreamDeckCommand.DIAL_UP;
         public virtual int TimeAfterLastDown { get => GetSourceValue<int>(); set => SetModelValue(value); }
-        public virtual bool IsRotary => Source.DeckCommandType == StreamDeckCommand.DIAL_LEFT || Source.DeckCommandType == StreamDeckCommand.DIAL_RIGHT;
+        public virtual bool IsRotary => Source.DeckCommandType == StreamDeckCommand.DIAL_LEFT || Source.DeckCommandType == StreamDeckCommand.DIAL_RIGHT || Source.DeckCommandType == StreamDeckCommand.DIAL_LEFT_PRESSED || Source.DeckCommandType == StreamDeckCommand.DIAL_RIGHT_PRESSED;
         public virtual int TickDelay { get => GetSourceValue<int>(); set => SetModelValue(value); }
         public virtual bool IsResettable => SimCommand.IsResetableValue(Source.CommandType, Source.DoNotRequestBvar);
         public virtual bool ResetSwitch { get => GetSourceValue<bool>(); set => SetModelValue(value); }

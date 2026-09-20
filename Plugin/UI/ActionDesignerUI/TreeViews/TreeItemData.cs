@@ -35,14 +35,13 @@ namespace PilotsDeck.UI.ActionDesignerUI.TreeViews
         public virtual List<TreeItemData> Children { get; protected set; } = [];
 
         [ObservableProperty]
-        protected bool _IsExpanded = false;
+        public partial bool IsExpanded { get; set; } = false;
 
         [ObservableProperty]
-        protected bool _IsSelected = false;
+        public partial bool IsSelected { get; set; } = false;
 
         [ObservableProperty]
-        protected bool _IsPasteActive = false;
-
+        public partial bool IsPasteActive { get; set; } = false;
         public virtual CommandWrapper<TreeItemData> PasteCommand { get; protected set; } = null;
 
         //Element
@@ -263,7 +262,7 @@ namespace PilotsDeck.UI.ActionDesignerUI.TreeViews
             IsSelected = IsItemSelected(currentItem);
             if (currentItem == null)
                 return IsSelected;
-            
+
             if (IsCommandType())
                 IsExpanded = true;
             else if (!IsSelected && currentItem.IsElementTree() && IsElementTree())
@@ -300,7 +299,7 @@ namespace PilotsDeck.UI.ActionDesignerUI.TreeViews
 
         public override int GetHashCode()
         {
-            return  ItemType.GetHashCode() ^
+            return ItemType.GetHashCode() ^
                     (Model?.GetHashCode() ?? 0) ^
                     ElementType.GetHashCode() ^
                     ElementID.GetHashCode() ^
