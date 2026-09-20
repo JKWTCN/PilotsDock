@@ -3,7 +3,7 @@
 
 - Merged PilotsDeck master through 33412bf (v0.9.5).
 - Retained StreamDock installation, Knob rendering, N4 touch handling, and existing localization.
-- Retained the locally customized CFIT package versions for StreamDock and localization compatibility; upstream CFIT dependency upgrades are deferred.
+- Rebuilt the customized CFIT packages as 2026.263.14.1126 after merging upstream 517ebaf, and updated all PilotsDock CFIT references; StreamDock support, localization, and build timestamp parsing are retained.
 - Retained the existing PilotsDock installer payload, version metadata, and executable; these must be regenerated together when building a release.
 - The upstream release notes below describe PilotsDeck; removal of StreamDock support does not apply to this fork.
 

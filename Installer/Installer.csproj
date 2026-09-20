@@ -45,16 +45,16 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CFIT.AppLogger, Version=2026.182.14.28, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\CFIT.AppLogger.2026.182.14.28\lib\net48\CFIT.AppLogger.dll</HintPath>
+    <Reference Include="CFIT.AppLogger, Version=2026.263.14.1126, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\CFIT.AppLogger.2026.263.14.1126\lib\net48\CFIT.AppLogger.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CFIT.AppTools, Version=2026.183.21.2725, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\CFIT.AppTools.2026.183.21.2725\lib\net48\CFIT.AppTools.dll</HintPath>
+    <Reference Include="CFIT.AppTools, Version=2026.263.14.1126, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\CFIT.AppTools.2026.263.14.1126\lib\net48\CFIT.AppTools.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CFIT.Installer, Version=2026.183.21.2678, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\CFIT.Installer.2026.183.21.2678\lib\net48\CFIT.Installer.dll</HintPath>
+    <Reference Include="CFIT.Installer, Version=2026.263.14.1126, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\CFIT.Installer.2026.263.14.1126\lib\net48\CFIT.Installer.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Costura, Version=6.2.0.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
