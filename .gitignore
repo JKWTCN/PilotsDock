@@ -360,3 +360,6 @@ healthchecksdb
 /PilotsDeck/custom-manifest.json
 /PilotsDeck/default-manifest.json
 /PilotsDeck/todo.txt
+
+# Bundled N4 SDK transport and its runtime dependencies.
+!Plugin/Native/N4/*.dll

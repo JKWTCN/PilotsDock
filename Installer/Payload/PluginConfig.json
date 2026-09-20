@@ -1,4 +1,6 @@
 {
+  "N4HidInputEnabled": true,
+  "N4DeviceSerials": {},
   "IdBase": 500,
   "SizeVariables": 10000,
   "SizeEvents": 10000,

@@ -17,6 +17,9 @@ namespace PilotsDeck
 {
     public class AppConfiguration : ISimConnectConfig, ILoggerConfig, IMobiConfig
     {
+        public bool N4HidInputEnabled { get; set; } = true;
+        // Host device ID -> USB serial; only needed for ambiguous multi-device setups.
+        public Dictionary<string, string> N4DeviceSerials { get; set; } = new();
         //Constants
         [JsonIgnore]
         public static string SdEncoder { get; } = "Encoder";

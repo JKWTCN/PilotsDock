@@ -20,6 +20,7 @@ namespace PilotsDeck.StreamDeck
         public int ReceivedDevices { get; protected set; } = 0;
         public static string PluginContext { get { return App.CommandLineArgs["pluginUUID"]; } }
         protected StreamDeckSocket Socket { get; } = new();
+        private N4InputBridge N4Input { get; set; }
 
         protected Channel<StreamDeckEvent> ChannelEventsReceived { get; } = Channel.CreateUnbounded<StreamDeckEvent>();
         public ChannelReader<StreamDeckEvent> ReceiveChannel { get { return ChannelEventsReceived.Reader; } }
@@ -28,11 +29,18 @@ namespace PilotsDeck.StreamDeck
 
         public async Task Run()
         {
+            using var hidCancellation = System.Threading.CancellationTokenSource.CreateLinkedTokenSource(App.CancellationToken);
+            Task hidTask = Task.CompletedTask;
             try
             {
                 Logger.Debug("Parsing 'info' Argument ...");
                 DeckInfo = JsonSerializer.Deserialize<StreamDeckInfoMessage>(App.CommandLineArgs["info"]);
                 InitialDeviceCount = DeckInfo.devices.Count;
+                if (App.Configuration.N4HidInputEnabled)
+                {
+                    N4Input = new N4InputBridge(DeckInfo);
+                    hidTask = N4Input.RunAsync(hidCancellation.Token);
+                }
 
                 await Socket.ConnectAsync();
                 await Socket.RegisterAsync();
@@ -50,6 +58,11 @@ namespace PilotsDeck.StreamDeck
             {
                 if (ex is not TaskCanceledException)
                     Logger.LogException(ex);
+            }
+            finally
+            {
+                hidCancellation.Cancel();
+                await hidTask;
             }
             Logger.Information("DeckController ended");
         }
@@ -115,10 +128,12 @@ namespace PilotsDeck.StreamDeck
                         }
                         else if (sdEvent.Event == "deviceDidConnect")
                         {
+                            N4Input?.DeviceChanged(sdEvent);
                             AddUpdateDevice(sdEvent);
                         }
                         else if (sdEvent.Event == "deviceDidDisconnect")
                         {
+                            N4Input?.DeviceChanged(sdEvent);
                             RemoveDevice(sdEvent);
                         }
                         else
@@ -126,7 +141,10 @@ namespace PilotsDeck.StreamDeck
                             if (App.Configuration.LogLevel == LogLevel.Verbose)
                                 Logger.Verbose(json);
 
-                            await ChannelEventsReceived.Writer.WriteAsync(sdEvent, App.CancellationToken);
+                            if (N4Input != null)
+                                sdEvent = await N4Input.TranslateAsync(sdEvent, App.CancellationToken);
+                            if (sdEvent != null)
+                                await ChannelEventsReceived.Writer.WriteAsync(sdEvent, App.CancellationToken);
                         }
                     }
 
