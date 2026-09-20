@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.9.5
+
+- No changes recorded
+
+
+<br/><br/>
+
+
 ## PilotsDock v0.9.5.0 (2026-09-20)
 
 ### PilotsDock features developed by JKWTCN
