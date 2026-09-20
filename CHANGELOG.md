@@ -2,26 +2,40 @@
 
 ## PilotsDock v0.9.5.0 (2026-09-20)
 
-- Merged PilotsDeck master through 33412bf (v0.9.5).
-- Retained StreamDock installation, Knob rendering, N4 touch handling, and existing localization.
-- Rebuilt the customized CFIT packages as 2026.263.14.1126 after merging upstream 517ebaf, and updated all PilotsDock CFIT references; StreamDock support, localization, and build timestamp parsing are retained.
-- Updated the installer payload, version metadata, and packaged installer to 0.9.5.0 (build 2026.09.20.0634).
-- The v0.9.5 changes below apply to PilotsDock. Earlier sections are upstream PilotsDeck release history; their Elgato installer targets and original StreamDock limitations do not describe the current fork.
+### PilotsDock features developed by JKWTCN
 
-### Changes imported from PilotsDeck v0.9.5
+These features were implemented in this fork before the upstream merge and remain included in this release. They are not features imported from PilotsDeck v0.9.5.
 
-#### Plugin
+- Added N4Pro touchscreen input handling to distinguish touchscreen taps from knob presses, route touchscreen releases to `touchTap`, and suppress paired release events (`23aa9ad`).
+- Adapted TouchBar image dimensions for N4Pro (`e393fdd`).
+- Added StreamDock Knob controller support and routed rendering through `setImage` (`82ff2d0`).
+- Adapted the installer for MiraBox/HotSpot StreamDock, including its plugin directory and application stop/start handling (`3a3ca8c`). StreamDock remains the installation target in this fork.
+- Added StreamDock support to Profile Manager, `.SDProfile` installation and packaging, and guidance for importing `.streamDeckProfile` files (`ce3a5d8`, `034a56f`, `8e62e8f`).
+- Added multilingual support for the plugin, action designer, Profile Manager, and installer (`1289b01`, `a7ed5d0`, `649c09e`, `0d0d813`).
+- Enabled multi-action support (`f920d5a`).
+- Renamed the application to PilotsDock and pointed update checks to this fork (`2bc82df`, `1ae1ee1`).
 
-- Added Named Indexes for A-Vars (SimVars) like (A:ELECTRICAL BUS VOLTAGE:'Bus_1'_n, Volts)
-- Fixed Size/Position Manipulator not being applied to Gauge Element (Composite Action)
-- Updated NuGet Packages
-- Updated MSFS SimConnect SDK
+### Updates imported from upstream PilotsDeck
 
-#### Installer
+Merged upstream master through `33412bf`, including changes from v0.9.3 through v0.9.5:
 
-- Preserved MiraBox/HotSpot StreamDock as the installation target, including stopping and restarting StreamDock during installation. The upstream removal of this target was not adopted.
-- Set .NET 10.0.12 as Target
+- Added separate commands for rotating a dial while pressed; unassigned pressed-rotation commands fall back to normal rotation commands.
+- Fixed composite actions being reset after an exception during loading or creation.
+- Added missing Elgato device types and 144x144 canvas defaults for StreamDeckVirtual and StreamDeckXLPlus.
+- Added named indexes for A-Vars (SimVars), such as `(A:ELECTRICAL BUS VOLTAGE:'Bus_1'_n, Volts)`.
+- Fixed size/position manipulators not being applied to gauge elements in composite actions.
+- Updated NuGet dependencies and the MSFS SimConnect SDK.
+- Updated the installer target runtime to .NET 10.0.12.
 
+The upstream removal of HotSpot/StreamDock installation support and the Elgato software installation targets were not adopted.
+
+### Dependency and release packaging updates
+
+- Merged upstream CFIT through `517ebaf` and rebuilt the local packages as `2026.263.14.1126`. The fork's StreamDock support, installer localization, and build timestamp parsing fix remain included.
+- Updated all PilotsDock CFIT references to these rebuilt packages.
+- Updated the installer payload, version metadata, and packaged installer to `0.9.5.0` (build `2026.09.20.0634`).
+
+The following sections preserve upstream PilotsDeck release history. Their Elgato installer targets and original StreamDock limitations do not describe the current PilotsDock fork.
 
 ## Upstream PilotsDeck v0.9.4 (historical reference)
 
@@ -39,7 +53,6 @@
 - Set StreamDeck SW 7.5.1 as Target
 - Set .NET 10.0.11 as Target
 
-
 ## Upstream PilotsDeck v0.9.3 (historical reference)
 
 ### Plugin
@@ -54,7 +67,6 @@
 
 - Set StreamDeck SW 7.5.0 as Target
 - Set .NET 10.0.10 as Target
-
 
 ## Upstream PilotsDeck v0.9.2 (historical reference)
 
@@ -72,7 +84,6 @@
 - Set .NET 10.0.8 as Target
 - Set FSUIPC 7.5.7 as Target
 - Set StreamDeck 7.4.2 as Target
-
 
 ## Upstream PilotsDeck v0.9.1 (historical reference)
 
