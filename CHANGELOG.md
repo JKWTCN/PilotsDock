@@ -1,5 +1,14 @@
 # Changelog
 
+## PilotsDock v0.9.6.0 (unreleased - upstream sync 2026-10-08)
+
+- Merged upstream PilotsDeck master through `77ccd83` and CFIT master through `f1aa8bc`.
+- Updated the SimConnect SDK binaries in both repositories and the installer FSUIPC7 target to 7.5.9.
+- Preserved StreamDock installation, Knob/N4Pro support, localization, and the fork's CFIT package references.
+- CFIT's temporary `CheckCanExecute` change was reverted upstream; the final source behavior remains unchanged.
+- Upstream's Elgato StreamDeck 7.6.0 installation target and packaged PilotsDeck binaries were not adopted.
+- No build or packaging was performed. CFIT references still use the existing local `2026.263.14.1126` packages; rebuild and repack CFIT, then update the fork's package references before building PilotsDock with the new SDK. The existing installer payload, version metadata, and installer executable remain at v0.9.5.0.
+
 ## v0.9.5
 
 - No changes recorded
