@@ -1,3 +1,6 @@
+# Release.ps1 has already updated and restored all CFIT dependencies before MSBuild evaluates projects.
+if ($env:PILOTSDOCK_CFIT_PREPARED -eq '1') { exit 0 }
+
 ### PRE
 ### pwsh -ExecutionPolicy Unrestricted -file "$(ProjectDir)..\NuPreBuild.ps1" $(SolutionDir) $(ProjectDir) "PROJECT" PACKAGES...
 

@@ -2,6 +2,7 @@
 ### pwsh -ExecutionPolicy Unrestricted -file "$(ProjectDir)ExportInstaller.ps1" $(SolutionDir) $(TargetDir) $(TargetFileName) "<APP>"
 
 #Exit inner Invocation when invoked with dotnet cli
+$ErrorActionPreference = 'Stop'
 if ($args[0] -eq "*Undefined*") {
 	exit 0
 }

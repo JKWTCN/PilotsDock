@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -76,7 +76,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CFIT.Installer" Version="2026.263.14.1126" />
+    <PackageReference Include="CFIT.Installer" Version="2026.281.9.2851" />
+    <PackageReference Include="CFIT.AppLogger" Version="2026.281.9.2851" />
+    <PackageReference Include="CFIT.AppTools" Version="2026.281.9.2851" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
   </ItemGroup>
 

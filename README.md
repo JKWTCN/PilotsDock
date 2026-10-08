@@ -2,6 +2,8 @@
 Directly check & control your FlightSim from StreamDeck and StreamDock devices!
 <br/><br/>
 
+Build from synchronized PilotsDock and CFIT sources with `pwsh ./Release.ps1`. See [Building and releasing](BUILDING.md) for the one-command workflow and prerequisites.
+
 # 1 - Introduction
 PilotsDock is a fork of [PilotsDeck](https://github.com/Fragtality/PilotsDeck), focused on MiraBox/HotSpot StreamDock compatibility while keeping the original StreamDeck functionality where supported. It is a Plugin with the Ability to **trigger Cockpit-Controls** in different Ways and especially reading & **displaying a Control's State** on the device as Text, Image, Bar/Arc or a Combination thereof. It is lean & mean, flexible, completely Open-Source and Free-to-Use.<br/><br/>
 

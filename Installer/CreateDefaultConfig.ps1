@@ -4,4 +4,6 @@
 
 $cmd = $args[2]
 $dest = $args[1]
-Invoke-Expression "$cmd --writeConfig $dest" | Out-Null
+$ErrorActionPreference = 'Stop'
+& $cmd --writeConfig $dest | Out-Null
+if ($LASTEXITCODE -ne 0) { throw "生成默认配置失败 (exit $LASTEXITCODE)" }

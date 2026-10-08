@@ -3,6 +3,7 @@
 ### add version.json as Embedded Resource
 
 #Exit inner Invocation when invoked with dotnet cli
+$ErrorActionPreference = 'Stop'
 if ($args[0] -eq "*Undefined*") {
 	exit 0
 }
@@ -26,7 +27,6 @@ $binFile = "$appName.exe"
 
 $zipPath = Join-Path $pathPayload "AppPackage.zip"
 $binPath = Join-Path $pathPublish $binFile
-$confPath = Join-Path $basePath $confFile
 $pathProjectApp = Join-Path $basePath $projectName
 
 #Get App Version
@@ -51,6 +51,7 @@ UpdateAssemblyInfo $pathProjectInstaller "AssemblyFileVersion" "$version"
 Write-Host "Zip AppPackage ..."
 Remove-Item $zipPath -ErrorAction SilentlyContinue | Out-Null
 & "C:\Program Files\7-Zip\7z.exe" a -tzip $zipPath ($pathPublish + "\*") | Out-Null
+if ($LASTEXITCODE -ne 0) { throw "AppPackage.zip 打包失败 (exit $LASTEXITCODE)" }
 
 #Config File
 Write-Host "Create default Config ..."

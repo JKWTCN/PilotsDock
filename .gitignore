@@ -363,3 +363,7 @@ healthchecksdb
 
 # Bundled N4 SDK transport and its runtime dependencies.
 !Plugin/Native/N4/*.dll
+
+# Keep the one-command release workflow in version control.
+!/Release.ps1
+/.release.lck
