@@ -1,5 +1,20 @@
 # Changelog
 
+
+## v0.9.7
+
+### Plugin
+- Changed the HttpGet Lua Function to accept a second optional Parameter for sending a json Payload with the Request
+- Added a HttpPost Lua Function doing the same just with the HTTP POST Method
+- Improved Error Logging on Lua Scripts
+- Fixed occasional Issue with InputEvent File being blocked by another Process
+
+### PilotsDock upstream synchronization (2026-10-13)
+- Merged PilotsDeck through `24e3660` and CFIT through `f0ecc2c`, including the null subscription cleanup fix.
+- Preserved StreamDock support, localization, and local CFIT package references (`2026.281.9.2851`).
+- Source manifest is now 0.9.7.0. No build or packaging was performed; the existing installer payload and metadata remain at 0.9.6.0. Run Release.ps1 to rebuild local CFIT packages and package the updated application.
+
+<br/><br/>
 ## v0.9.6
 
 ### Plugin
