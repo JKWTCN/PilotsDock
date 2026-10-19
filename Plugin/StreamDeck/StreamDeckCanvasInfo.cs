@@ -13,6 +13,8 @@ namespace PilotsDeck.StreamDeck
         // True for real Stream Deck+ Encoders that render through a layout + setFeedback.
         // False for Knob controllers (e.g. StreamDock), which must use setImage instead.
         public bool UsesFeedbackLayout { get; set; } = false;
+        private KnobFeedback _knobFeedback;
+        public KnobFeedback KnobFeedback { get { return _knobFeedback ??= new KnobFeedback(); } }
 
         public PointF GetCanvasSize()
         {

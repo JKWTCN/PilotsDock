@@ -260,14 +260,22 @@ namespace PilotsDeck.Actions
                     {
                         Redraws++;
                         Logger.Verbose($"--REDRAW-- for State '{state}' - Needs Redraw, Refresh ({action.Value.NeedRedraw}, {action.Value.NeedRefresh}) ID {action.Value.ActionID}");
-                        if (action.Value.IsEncoder && action.Value.CanvasInfo.UsesFeedbackLayout)
+                        if (action.Value.IsEncoder)
                         {
-                            _ = DeckController.SetFeedbackItemImageRaw(AppConfiguration.SdTargetImage, action.Key, SelectImage(action.Value, state));
-                            if (action.Value.FirstLoad)
+                            if (action.Value.CanvasInfo.UsesFeedbackLayout)
                             {
-                                _ = DeckController.SendSetImageRaw(action.Key, ImageManager.DEFAULT_ENCODER);
-                                action.Value.FirstLoad = false;
+                                _ = DeckController.SetFeedbackItemImageRaw(AppConfiguration.SdTargetImage, action.Key, SelectImage(action.Value, state));
+                                if (action.Value.FirstLoad)
+                                    _ = DeckController.SendSetImageRaw(action.Key, ImageManager.DEFAULT_ENCODER);
                             }
+                            else
+                            {
+                                string image = action.Value.CanvasInfo.KnobFeedback.RenderCanvasImage(SelectImage(action.Value, state));
+                                if (action.Value.FirstLoad)
+                                    _ = DeckController.SendSetTitle(action.Key, "");
+                                _ = DeckController.SendSetImageRaw(action.Key, image);
+                            }
+                            action.Value.FirstLoad = false;
                         }
                         else
                             _ = DeckController.SendSetImageRaw(action.Key, SelectImage(action.Value, state));
