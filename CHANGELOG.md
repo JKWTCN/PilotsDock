@@ -1,5 +1,12 @@
 # Changelog
 
+## Upstream synchronization (2026-10-19)
+
+- Merged PilotsDeck through `d6e1c81` and CFIT through `e53b89a`.
+- Updated .NET package dependencies and the installer runtime requirement to 10.0.13. The upstream application version remains 0.9.7.0.
+- Preserved StreamDock support, localization, and local CFIT package references (`2026.286.9.714`). Run Release.ps1 to rebuild the updated CFIT sources and refresh package versions before release.
+- No build or packaging was performed; the existing PilotsDock installer, payload, and build timestamps are unchanged.
+
 ## v0.9.7
 
 ### Plugin
