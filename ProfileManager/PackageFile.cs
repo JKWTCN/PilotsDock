@@ -1,11 +1,12 @@
 ﻿using CFIT.AppLogger;
 using CFIT.Installer.Tasks;
-using ProfileManager.json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Text;
+using System.Text.Json.Nodes;
 
 namespace ProfileManager
 {
@@ -20,12 +21,15 @@ namespace ProfileManager
     {
         public class PackagedProfile(string filename, string profilename)
         {
-            public string FileName { get; set; } = filename;
+            public string FileName => IsStreamDeckProfile ? Path.ChangeExtension(SourceFileName, Parameters.SD_PROFILE_EXTENSION) : SourceFileName;
             public string ProfileName { get; set; } = profilename;
+            public string SourceFileName { get; set; } = filename;
+            public bool IsStreamDeckProfile { get; set; }
+            public HashSet<string> ExistingDirectories { get; } = new(StringComparer.OrdinalIgnoreCase);
             public bool HasOldProfile { get; set; } = false;
-            public string InstallFilePath { get { return $@"{Parameters.PLUGIN_PROFILE_PATH}\{FileName}"; } }
-            public string InstallPath { get { return $"\"{Parameters.PLUGIN_PROFILE_PATH}\\{FileName}\""; } }
+            public string InstallFilePath { get; set; }
             public bool IsInstalled { get; set; } = false;
+            public string InstalledDirectory { get; set; }
             public PackageClickResponse ClickResponse { get; set; } = PackageClickResponse.NotClicked;
             public bool IsLinkDisabled { get; set; } = false;
         }
@@ -48,11 +52,14 @@ namespace ProfileManager
         public int CountImages { get { return FilesImages.Count; } }
         public int CountScripts { get { return FilesScripts.Count; } }
         public int CountExtras { get { return FilesExtras.Count; } }
-        public int CountValidTotal { get { return PackagedProfiles.Count + FilesStreamDeckProfiles.Count + FilesImages.Count + FilesScripts.Count; } }
+        public int CountValidTotal { get { return PackagedProfiles.Count + FilesImages.Count + FilesScripts.Count; } }
         public bool HasStreamDeckProfiles { get { return CountStreamDeckProfiles > 0; } }
         public bool IsCompatible { get; protected set; } = false;
         public bool IsDisposed { get; protected set; } = false;
-        public string ProfileWorkPath { get { return KeepPackageContents ? @$"{Parameters.PLUGIN_PROFILE_PATH}\{Path.GetFileNameWithoutExtension(FileName)}" : Parameters.PROFILE_WORK_PATH; } }
+        public bool IsStandaloneProfile => IsProfileFile(FullPath);
+        public RotaryProfileTarget RotaryTarget { get; set; } = RotaryProfileTarget.N4Pro;
+        public List<string> ConversionWarnings { get; } = [];
+        public string ProfileWorkPath { get; } = Path.Combine(Parameters.PROFILE_WORK_PATH, Guid.NewGuid().ToString("N"));
         public string ProfileFolderPath { get { return @$"{ProfileWorkPath}\{Parameters.PLUGIN_PROFILE_FOLDER}"; } }
         public List<PackagedProfile> PackagedProfiles { get; protected set; } = [];
         public List<string> FilesStreamDeckProfiles { get; protected set; } = [];
@@ -75,7 +82,7 @@ namespace ProfileManager
                 }
 
                 string extension = Path.GetExtension(FullPath).ToLowerInvariant();
-                if (extension != Parameters.PACKAGE_EXTENSION && extension != ".zip")
+                if (extension != Parameters.PACKAGE_EXTENSION && extension != ".zip" && !IsStandaloneProfile)
                 {
                     task.SetError("The File has the wrong Extension!");
                     return false;
@@ -97,7 +104,7 @@ namespace ProfileManager
                     Logger.Debug($"Filesize is {fileInfo.Length}");
 
                 task.Message = "Check File Access";
-                using var stream = File.Open(FullPath, FileMode.Open);
+                using var stream = File.OpenRead(FullPath);
                 if (stream == null || !stream.CanRead)
                 {
                     task.SetError("File can not be opened for Read!");
@@ -137,6 +144,14 @@ namespace ProfileManager
                     return false;
                 }
 
+                if (IsStandaloneProfile)
+                {
+                    Manifest = new PackageManifest { Title = FileName };
+                    AddProfile(Path.GetFileName(FullPath), Archive, IsStreamDeckFile(FullPath));
+                    IsCompatible = true;
+                    task.State = TaskState.COMPLETED;
+                    return true;
+                }
 
                 task.Message = $"Get {Parameters.PACKAGE_JSON_FILE} from Archive";
                 Logger.Debug(task.Message);
@@ -183,14 +198,17 @@ namespace ProfileManager
                     if (IsProfilePath(entry.FullName))
                     {
                         string filename = entry.FullName.Replace($"{Parameters.PLUGIN_PROFILE_FOLDER}/", "", StringComparison.InvariantCultureIgnoreCase);
-                        string profilename = ReadProfileManifestFromZip(task, entry);
-                        if (string.IsNullOrEmpty(filename) || string.IsNullOrEmpty(profilename))
-                            return false;
-                        else
-                            PackagedProfiles.Add(new(filename, profilename));
+                        using var stream = entry.Open();
+                        using var profileArchive = new ZipArchive(stream, ZipArchiveMode.Read);
+                        AddProfile(filename, profileArchive, false);
                     }
                     else if (IsStreamDeckProfilePath(entry.FullName))
-                        FilesStreamDeckProfiles.Add(entry.FullName.Replace($"{Parameters.PLUGIN_PROFILE_FOLDER}/", "", StringComparison.InvariantCultureIgnoreCase));
+                    {
+                        string filename = entry.FullName[(Parameters.PLUGIN_PROFILE_FOLDER.Length + 1)..];
+                        using var stream = entry.Open();
+                        using var profileArchive = new ZipArchive(stream, ZipArchiveMode.Read);
+                        AddProfile(filename, profileArchive, true);
+                    }
                     else if (IsImagePath(entry.FullName))
                         FilesImages.Add(entry.FullName.Replace($"{Parameters.PLUGIN_IMAGE_FOLDER}/", "", StringComparison.InvariantCultureIgnoreCase));
                     else if (IsScriptPath(entry.FullName))
@@ -225,65 +243,33 @@ namespace ProfileManager
             }
         }
 
-        protected string ReadProfileManifestFromZip(TaskModel task, ZipArchiveEntry archiveEntry)
+        public static bool IsStreamDeckFile(string path) => path.EndsWith(Parameters.STREAMDECK_PROFILE_EXTENSION, StringComparison.OrdinalIgnoreCase);
+
+        public static bool IsProfileFile(string path) => !string.IsNullOrEmpty(path) && (IsStreamDeckFile(path)
+            || path.EndsWith(Parameters.SD_PROFILE_EXTENSION, StringComparison.OrdinalIgnoreCase)
+            || path.EndsWith(".streamDockProfile", StringComparison.OrdinalIgnoreCase));
+
+        private void AddProfile(string filename, ZipArchive archive, bool convert)
         {
-            task.Message = $"Open {archiveEntry.FullName} Content";
-            Logger.Debug(task.Message);
-            string profilename = null;
-            using var tempStream = archiveEntry.Open();
-            if (tempStream == null)
+            string name;
+            if (convert)
             {
-                Dispose();
-                task.SetError("Failed to open Stream (tempStream was NULL)!");
-                return profilename;
+                var converter = new StreamDeckProfileConverter(archive, RotaryTarget);
+                name = converter.ProfileName;
+                FilesStreamDeckProfiles.Add(filename);
+                foreach (string warning in converter.Warnings)
+                    ConversionWarnings.Add($"{filename}: {warning}");
             }
-
-            using var tempArchive = new ZipArchive(tempStream, ZipArchiveMode.Read, true);
-            if (tempArchive == null)
-            {
-                Dispose();
-                task.SetError("Failed to read Stream (tempArchive was NULL)!");
-                return profilename;
-            }
-            if (tempArchive.Entries.Count == 0)
-            {
-                Dispose();
-                task.SetError("Archive is Empty!");
-                return profilename;
-            }
-
-            task.Message = $"Get {Parameters.SD_PROFILE_MANIFEST} for Profile";
-            ZipArchiveEntry manifestEntry = null;
-            // A .SDProfile / .streamDeckProfile is a ZIP. The device-level manifest.json sits
-            // at the archive root (StreamDock); fall back to a nested .sdProfile/manifest.json.
-            ZipArchiveEntry nestedEntry = null;
-            foreach (var entry in tempArchive.Entries)
-            {
-                if (entry.FullName.Equals(Parameters.SD_PROFILE_MANIFEST, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    manifestEntry = entry;
-                    break;
-                }
-                if (nestedEntry == null && entry.FullName.Contains($".sdProfile/{Parameters.SD_PROFILE_MANIFEST}", StringComparison.InvariantCultureIgnoreCase))
-                    nestedEntry = entry;
-            }
-            manifestEntry ??= nestedEntry;
-            if (manifestEntry == null)
-            {
-                Dispose();
-                task.SetError($"Failed to locate {Parameters.SD_PROFILE_MANIFEST} for Profile!");
-                return profilename;
-            }
-
-            string packageStr = ReadStringFromZip(manifestEntry);
-            if (!string.IsNullOrWhiteSpace(packageStr))
-                return ProfileManifest.LoadManifest(packageStr)?.ProfileName;
             else
             {
-                Dispose();
-                task.SetError($"The File {archiveEntry.FullName} is Empty!");
-                return profilename;
+                var manifest = archive.Entries.SingleOrDefault(e => StreamDeckProfileConverter.IsRootManifestPath(e.FullName));
+                if (manifest == null)
+                    throw new InvalidDataException($"No top-level profile manifest in {filename}");
+                name = JsonNode.Parse(ReadStringFromZip(manifest))?["Name"]?.GetValue<string>();
+                if (string.IsNullOrWhiteSpace(name))
+                    throw new InvalidDataException($"Missing profile name in {filename}");
             }
+            PackagedProfiles.Add(new(filename, name) { IsStreamDeckProfile = convert });
         }
 
         public bool InstallPackage()
@@ -292,24 +278,33 @@ namespace ProfileManager
             {
                 Logger.Debug($"Install Package Files ...");
 
-                if (HasStreamDeckProfiles)
-                    KeepPackageContents = true;
-
                 var task = TaskStore.Add(Localization.Translate("Install Package Files"), Localization.Translate("Extract Archive to Work-Directory: ({0})", ProfileWorkPath));
                 task.DisplayCompleted = false;
 
-                if (Directory.Exists(ProfileWorkPath))
-                {
-                    Logger.Debug($"Clean up work Folder (pre)");
-                    Directory.Delete(ProfileWorkPath, true);
-                }
-
                 Logger.Debug($"Extract Archive to work dir");
-                Archive.ExtractToDirectory(ProfileWorkPath, true);
-
-                if (CountProfiles > 0)
+                Directory.CreateDirectory(ProfileWorkPath);
+                if (IsStandaloneProfile)
                 {
-                    CopyValidFolderFiles(Parameters.PLUGIN_PROFILE_FOLDER, $"*{Parameters.SD_PROFILE_EXTENSION}", 0);
+                    Directory.CreateDirectory(ProfileFolderPath);
+                    File.Copy(FullPath, Path.Combine(ProfileFolderPath, Path.GetFileName(FullPath)));
+                }
+                else
+                    Archive.ExtractToDirectory(ProfileWorkPath);
+
+                foreach (var profile in PackagedProfiles)
+                {
+                    string source = Path.Combine(ProfileFolderPath, profile.SourceFileName);
+                    profile.InstallFilePath = source;
+                    if (profile.IsStreamDeckProfile)
+                    {
+                        using var input = ZipFile.OpenRead(source);
+                        var converter = new StreamDeckProfileConverter(input, RotaryTarget);
+                        string outputDirectory = Path.Combine(ProfileFolderPath, Guid.NewGuid().ToString("N"));
+                        Directory.CreateDirectory(outputDirectory);
+                        string output = Path.Combine(outputDirectory, Path.GetFileName(profile.FileName));
+                        converter.Write(output);
+                        profile.InstallFilePath = output;
+                    }
                 }
 
                 if (CountImages > 0)
@@ -350,15 +345,6 @@ namespace ProfileManager
                     }
                 }
 
-                if (!KeepPackageContents && Directory.Exists(ProfileWorkPath))
-                {
-                    task.Message = "Cleanup Work-Directory";
-                    Logger.Debug($"Clean up work Folder (post)");
-                    Directory.Delete(ProfileWorkPath, true);
-                }
-                else
-                    Logger.Debug($"Cleanup (post) skipped (keep {KeepPackageContents})");
-
                 Dispose();
                 task.SetSuccess("Package Files placed into Plugin-Directory.");
                 task.IsCompleted = true;
@@ -369,6 +355,24 @@ namespace ProfileManager
                 Dispose();
                 TaskStore.CurrentTask.SetError(ex);
                 return false;
+            }
+        }
+
+        public void Cleanup()
+        {
+            // Each PackageFile owns a unique staging directory. Keep it until imports finish.
+            try
+            {
+                if (!KeepPackageContents && Directory.Exists(ProfileWorkPath))
+                    Directory.Delete(ProfileWorkPath, true);
+            }
+            catch (IOException ex)
+            {
+                Logger.Warning($"Could not clean profile staging directory '{ProfileWorkPath}': {ex.Message}");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Logger.Warning($"Could not clean profile staging directory '{ProfileWorkPath}': {ex.Message}");
             }
         }
 
@@ -425,7 +429,8 @@ namespace ProfileManager
 
         protected static bool IsProfilePath(string filepath)
         {
-            return CheckPathBeginEnd(filepath, $"{Parameters.PLUGIN_PROFILE_FOLDER}/", Parameters.SD_PROFILE_EXTENSION);
+            return CheckPathBeginEnd(filepath, $"{Parameters.PLUGIN_PROFILE_FOLDER}/", Parameters.SD_PROFILE_EXTENSION)
+                || CheckPathBeginEnd(filepath, $"{Parameters.PLUGIN_PROFILE_FOLDER}/", ".streamDockProfile");
         }
 
         protected static bool IsStreamDeckProfilePath(string filepath)

@@ -476,6 +476,16 @@
     "Update: {0}": "更新：{0}",
     "New: {0}": "新建：{0}",
     "{0} Profiles": "{0} 个配置文件",
+    "{0} StreamDeck Profiles (automatic conversion)": "{0} 个 StreamDeck 配置文件（自动转换）",
+    "Scene target device:": "场景目标设备：",
+    "Scenes will be converted for {0}: 10 keys and 4 knobs. Select the matching device in StreamDock before importing.": "场景将转换为 {0} 布局：10 个按键、4 个旋钮。导入前请在 StreamDock 中选中对应设备。",
+    "The encoder strip background is kept as an image resource; each Knob uses its action's own display.": "旋钮显示条背景会作为图片资源保留；每个旋钮使用对应动作自身的显示内容。",
+    "Encoder position {0} exceeds the N4 layout's four knobs. Move the extra actions to another page before importing.": "旋钮位置 {0} 超出 N4 布局的 4 个旋钮范围。请先将多余动作移到其他页面，再导入。",
+    "Key position {0} exceeds the N4 layout's 5 x 2 keys. Move the extra actions to another page before importing.": "按键位置 {0} 超出 N4 布局的 5×2 按键范围。请先将多余动作移到其他页面，再导入。",
+    "Conversion compatibility notes": "转换兼容性说明",
+    "Scene-switch buttons referencing other profiles must be reassigned in StreamDock.": "引用其他场景的切换按钮需要在 StreamDock 中重新指定目标。",
+    "Action requires a compatible StreamDock plugin or manual reassignment: {0}": "此动作需要兼容的 StreamDock 插件或手动重新配置：{0}",
+    "Profile files|*.ppp;*.zip;*.SDProfile;*.streamDockProfile;*.streamDeckProfile|All files (*.*)|*.*": "配置文件|*.ppp;*.zip;*.SDProfile;*.streamDockProfile;*.streamDeckProfile|所有文件 (*.*)|*.*",
     "{0} StreamDeck Profiles (conversion required)": "{0} 个 StreamDeck 配置文件（需要转换）",
     "{0} Images": "{0} 张图片",
     "{0} Scripts": "{0} 个脚本",
@@ -562,6 +572,11 @@
     "Install Package Files": "安装包文件",
     "Extract Archive to Work-Directory: ({0})": "将压缩包解压到工作目录：({0})",
     "The File 'Profiles\\DeviceInfo.json' does not exist or is empty!\r\nStart/Stop the VSD Craft and try again.": "文件 'Profiles\\DeviceInfo.json' 不存在或为空！\r\n请启动/停止 VSD Craft 后重试。",
-    "Error": "错误"
+    "Error": "错误",
+    "Pages with more than {0} keys are split into linked pages; all original actions are preserved.": "超过 {0} 个按键的页面将拆为可导航的后续页面，保留全部原始动作。",
+    "Previous page": "上一页",
+    "Next page": "下一页",
+    "Scenes will be converted for XL: 32 keys and no knobs. Select XL in StreamDock before importing.": "场景将转换为 XL 布局：32 个按键、没有旋钮。导入前请在 StreamDock 中选中 XL。",
+    "XL has no knobs. Select N4 or N4Pro to import a scene with encoder actions.": "XL 没有旋钮。导入包含旋钮动作的场景时，请选择 N4 或 N4Pro。"
   }
 }

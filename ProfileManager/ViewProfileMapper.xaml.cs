@@ -310,6 +310,8 @@ namespace ProfileManager
 
             bool doLoad = ProfileController.CountManifestsRemoved > 0 || ProfileController.CountMappingsRemoved > 0;
             ProfileController.SaveChanges();
+            if (ProfileController.HasError)
+                return;
 
             if (doLoad)
             {
@@ -361,6 +363,11 @@ namespace ProfileManager
                 if (result == MessageBoxResult.Yes)
                     ProfileController.SaveChanges();
             }
+        }
+
+        public void Dispose()
+        {
+            ViewUpdateTimer?.Stop();
         }
 
         private void TextboxNameFilter_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)

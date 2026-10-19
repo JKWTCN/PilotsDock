@@ -26,6 +26,14 @@ namespace ProfileManager
             Localization.Apply(this);
 
             InstallWorker = new();
+            SelectRotaryTarget.ItemsSource = new[]
+            {
+                new KeyValuePair<RotaryProfileTarget, string>(RotaryProfileTarget.N4, "N4"),
+                new KeyValuePair<RotaryProfileTarget, string>(RotaryProfileTarget.N4Pro, "N4Pro"),
+                new KeyValuePair<RotaryProfileTarget, string>(RotaryProfileTarget.XL, "XL")
+            };
+            SelectRotaryTarget.SelectedValue = RotaryProfileTarget.N4Pro;
+            SelectRotaryTarget.SelectionChanged += SelectRotaryTarget_SelectionChanged;
 
             LabelNotes.Background = this.Background;
             LabelNotes.BorderThickness = new Thickness(0);
@@ -52,6 +60,8 @@ namespace ProfileManager
             AreaPackageInfo.Visibility = Visibility.Collapsed;
             AreaButtons.Visibility = Visibility.Collapsed;
             LabelInstallerNotice.Visibility = Visibility.Collapsed;
+            AreaRotaryTarget.Visibility = Visibility.Visible;
+            SelectRotaryTarget.IsEnabled = true;
 
             ButtonConfirmation.Visibility = Visibility.Visible;
         }
@@ -79,6 +89,10 @@ namespace ProfileManager
 
         protected void SetStateLoadingPackage(string filePath)
         {
+            TimerClearTasks.Stop();
+            SelectRotaryTarget.IsEnabled = false;
+            InstallWorker?.Dispose();
+            InstallWorker = new();
             AreaTaskStatus.Visibility = Visibility.Visible;
             AreaFileDrop.Visibility = Visibility.Collapsed;
             AreaPackageInfo.Visibility = Visibility.Collapsed;
@@ -86,7 +100,7 @@ namespace ProfileManager
 
             IsPackageActive = true;
 
-            InstallWorker.SetFile(filePath);
+            InstallWorker.SetFile(filePath, (RotaryProfileTarget)SelectRotaryTarget.SelectedValue);
 
             AreaTaskStatus.Activate(SetStateShowPackage, SetStateLoadFailed);
 
@@ -95,6 +109,7 @@ namespace ProfileManager
 
         protected void SetStateLoadFailed()
         {
+            SelectRotaryTarget.IsEnabled = true;
             AreaButtons.Visibility = Visibility.Visible;
             AreaTaskStatus.Deactivate();
             SetButtonState(false, true, false);
@@ -102,6 +117,7 @@ namespace ProfileManager
 
         protected void SetStateShowPackage()
         {
+            SelectRotaryTarget.IsEnabled = true;
             AreaTaskStatus.Visibility = Visibility.Visible;
             AreaFileDrop.Visibility = Visibility.Collapsed;
             AreaPackageInfo.Visibility = Visibility.Visible;
@@ -117,6 +133,8 @@ namespace ProfileManager
 
         protected async void SetStateInstallingPackage()
         {
+            AreaRotaryTarget.Visibility = Visibility.Collapsed;
+            SelectRotaryTarget.IsEnabled = false;
             AreaTaskStatus.Visibility = Visibility.Visible;
             AreaFileDrop.Visibility = Visibility.Collapsed;
             AreaPackageInfo.Visibility = Visibility.Collapsed;
@@ -193,6 +211,8 @@ namespace ProfileManager
                 Logger.Debug($"Showing Package Info for '{InstallWorker.PackageFile?.Title}'");
 
                 var PackageFile = InstallWorker.PackageFile;
+                TreeFileContents.Items.Clear();
+                TreeRemoveFiles.Items.Clear();
 
                 LabelTitle.Text = PackageFile.Title ?? "";
 
@@ -224,7 +244,8 @@ namespace ProfileManager
                         displayList.Add(Localization.Translate("New: {0}", profile.FileName));
                 }
                 AddTreeItems(Localization.Translate("{0} Profiles", PackageFile.CountProfiles), displayList, null, true);
-                AddTreeItems(Localization.Translate("{0} StreamDeck Profiles (conversion required)", PackageFile.CountStreamDeckProfiles), PackageFile.FilesStreamDeckProfiles, new SolidColorBrush(Colors.Orange), true);
+                AddTreeItems(Localization.Translate("{0} StreamDeck Profiles (automatic conversion)", PackageFile.CountStreamDeckProfiles), PackageFile.FilesStreamDeckProfiles, null, true);
+                AddTreeItems(Localization.Translate("Conversion compatibility notes"), PackageFile.ConversionWarnings, new SolidColorBrush(Colors.Orange), true);
                 AddTreeItems(Localization.Translate("{0} Images", PackageFile.CountImages), PackageFile.FilesImages);
                 AddTreeItems(Localization.Translate("{0} Scripts", PackageFile.CountScripts), PackageFile.FilesScripts);
                 AddTreeItems(Localization.Translate("{0} Extras", PackageFile.CountExtras), PackageFile.FilesExtras);
@@ -242,12 +263,7 @@ namespace ProfileManager
                 }
 
                 CheckboxRemoveOld.IsChecked = InstallWorker.OptionRemoveOldProfiles;
-                if (PackageFile.HasStreamDeckProfiles)
-                {
-                    LabelRemoveOld.Visibility = Visibility.Collapsed;
-                    CheckboxRemoveOld.Visibility = Visibility.Collapsed;
-                }
-                else if (InstallWorker.CountProfileUpdates > 0)
+                if (InstallWorker.CountProfileUpdates > 0)
                 {
                     LabelRemoveOld.Visibility = Visibility.Visible;
                     CheckboxRemoveOld.Visibility = Visibility.Visible;
@@ -258,14 +274,7 @@ namespace ProfileManager
                     CheckboxRemoveOld.Visibility = Visibility.Collapsed;
                 }
 
-                CheckboxKeepContents.IsChecked = false;
-                if (PackageFile.HasStreamDeckProfiles)
-                {
-                    CheckboxKeepContents.IsChecked = true;
-                    CheckboxKeepContents.IsEnabled = false;
-                    LabelKeepContents.ToolTip = Localization.Translate("StreamDock profiles must stay extracted so they can be converted.");
-                    CheckboxKeepContents.ToolTip = Localization.Translate("StreamDeck profiles must stay extracted so they can be converted.");
-                }
+                CheckboxKeepContents.IsChecked = PackageFile.KeepPackageContents;
             }
             catch (Exception ex)
             {
@@ -293,6 +302,12 @@ namespace ProfileManager
                 TreeFileContents.Items.Add(treeitem);
             else
                 treeView.Items.Add(treeitem);
+        }
+
+        private void SelectRotaryTarget_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (SelectRotaryTarget.IsEnabled && IsPackageActive && InstallWorker?.PackageFile?.FullPath is string path)
+                SetStateLoadingPackage(path);
         }
 
         protected void RequestNavigateHandler(object sender, RequestNavigateEventArgs e)
@@ -340,7 +355,7 @@ namespace ProfileManager
                 OpenFileDialog openFileDialog = new()
                 {
                     Title = Localization.Translate("Open Profile Package ..."),
-                    Filter = Localization.Translate("{0} (*{1})|*{1}|Zip File (*.zip)|*.zip|All files (*.*)|*.*", Parameters.PACKAGE_EXTENSION_NAME, Parameters.PACKAGE_EXTENSION)
+                    Filter = Localization.Translate("Profile files|*.ppp;*.zip;*.SDProfile;*.streamDockProfile;*.streamDeckProfile|All files (*.*)|*.*")
                 };
 
                 if (openFileDialog.ShowDialog() == true)
@@ -379,6 +394,7 @@ namespace ProfileManager
 
         public void Dispose()
         {
+            IsPackageActive = false;
             InstallWorker?.Dispose();
             AreaTaskStatus.Deactivate(true);
             TimerClearTasks.Stop();

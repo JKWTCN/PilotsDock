@@ -123,6 +123,9 @@ namespace ProfileManager.json
             var manifest = JsonSerializer.Deserialize<ProfileManifest>(json);
             if (manifest != null)
             {
+                var root = JsonNode.Parse(json);
+                if (root?["Device"] is JsonObject device)
+                    manifest.Device = device.Deserialize<ManifestDevice>();
                 // StreamDock flat format (DeviceModel/DeviceUUID present)
                 if (!string.IsNullOrEmpty(manifest.DeviceUUID) || !string.IsNullOrEmpty(manifest.DeviceSerialNumber))
                 {
@@ -168,8 +171,7 @@ namespace ProfileManager.json
 
         // Writes the manifest back to disk while preserving all original fields
         // (Actions, Pages, pageuuid, AppIdentifier, etc.) that the ProfileManifest
-        // POCO does not model. Only PilotsDock's own fields
-        // (InstalledByPluginUUID / PreconfiguredName) are updated on the original JSON.
+        // POCO does not model. Update the editable name and PilotsDock metadata.
         public static void WriteManifest(string path, ProfileManifest manifest)
         {
             JsonNode root;
@@ -184,7 +186,8 @@ namespace ProfileManager.json
                 root = JsonSerializer.SerializeToNode(manifest, WriteOptions) ?? new JsonObject();
             }
 
-            // Update only the fields PilotsDock manages.
+            root["Name"] = manifest.ProfileName;
+            // Preserve unrelated native fields while updating PilotsDock metadata.
             if (manifest.InstalledByPluginUUID != null)
                 root["InstalledByPluginUUID"] = manifest.InstalledByPluginUUID;
             else if (root["InstalledByPluginUUID"] != null)

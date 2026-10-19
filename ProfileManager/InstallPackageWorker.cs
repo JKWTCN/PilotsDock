@@ -34,15 +34,17 @@ namespace ProfileManager
         public bool IsLoaded { get; protected set; } = false;
         public bool IsCompatible { get { return PackageFile.IsCompatible; } }
         public bool FilesInstalled { get; protected set; } = false;
-        public bool IsInstalled { get { return FilesInstalled && ProfileTasksCompleted; } }
+        public bool IsInstalled { get { return InstallationCompleted && FilesInstalled && ProfileTasksCompleted; } }
+        public bool InstallationCompleted { get; protected set; }
+        protected bool IsInstalling { get; set; }
 
         public int CountValidFiles { get { return PackageFile.CountValidTotal; } }
         public int CountTotalFiles { get { return PackageFile.CountValidTotal + PackageFile.FilesUnknown.Count; } }
         public int CountProfileUpdates { get { return PackageFile.PackagedProfiles.Where(p => p.HasOldProfile).Count(); } }
 
-        public void SetFile(string filePath)
+        public void SetFile(string filePath, RotaryProfileTarget rotaryTarget = RotaryProfileTarget.N4Pro)
         {
-            PackageFile = new(filePath);
+            PackageFile = new(filePath) { RotaryTarget = rotaryTarget };
         }
 
         public bool LoadPackage()
@@ -58,6 +60,7 @@ namespace ProfileManager
             }
             catch (Exception ex)
             {
+                IsLoaded = false;
                 TaskStore.CurrentTask.SetError(ex);
             }
 
@@ -69,8 +72,14 @@ namespace ProfileManager
             var checkTask = TaskStore.Add(Localization.Translate("Check existing Profiles"), "");
             checkTask.DisplayCompleted = false;
             ProfileController.LoadManifestsOnly();
+            if (!ProfileController.IsLoaded)
+                throw new InvalidOperationException("Could not read existing profiles.");
             foreach (var profile in PackageFile.PackagedProfiles)
             {
+                profile.ExistingDirectories.Clear();
+                profile.HasOldProfile = false;
+                foreach (var manifest in ProfileController.ProfileManifests)
+                    profile.ExistingDirectories.Add(manifest.ProfileDirectory);
                 if (!string.IsNullOrEmpty(profile.ProfileName) && ProfileController.ManifestNameExits(profile.ProfileName))
                 {
                     checkTask.Message = $"Found match for '{profile.ProfileName}' (File: {profile.FileName})";
@@ -83,36 +92,43 @@ namespace ProfileManager
 
         public async Task InstallPackageAsync()
         {
+            IsInstalling = true;
             try
             {
+                bool replaceOld = OptionRemoveOldProfiles;
+                if (PackageFile.CountProfiles > 0)
+                    CheckExistingProfiles();
+                OptionRemoveOldProfiles = replaceOld;
                 FilesInstalled = PackageFile.InstallPackage();
                 PackageFile.Dispose();
                 if (!FilesInstalled)
                     return;
 
-                if (PackageFile.HasStreamDeckProfiles)
-                {
-                    ShowStreamDeckConversionNotice();
-                    OpenStreamDeckProfileFolder();
-                    return;
-                }
-
                 if (PackageFile.CountProfiles > 0)
                 {
-                    if (await AddStreamDockProfilesAsync() && await CheckProfilesInstalled() && OptionRemoveOldProfiles)
+                    if (!await AddStreamDockProfilesAsync() || !await CheckProfilesInstalled())
+                        return;
+                    if (OptionRemoveOldProfiles)
                     {
                         MainWindow.SetForeground();
-                        await SwapProfilesAsync();
+                        SwapProfiles();
                     }
                     else
                         MainWindow.SetForeground();
                 }
                 else
                     Logger.Debug($"Skipping Add & Swap for Package with no Profiles!");
+                InstallationCompleted = !IsCanceled;
             }
             catch (Exception ex)
             {
                 TaskStore.CurrentTask.SetError(ex);
+            }
+            finally
+            {
+                IsInstalling = false;
+                if (InstallationCompleted || IsCanceled)
+                    PackageFile.Cleanup();
             }
         }
 
@@ -122,12 +138,16 @@ namespace ProfileManager
             bool result = false;
             try
             {
+                if (IsCanceled)
+                    return false;
                 // Start VSD Craft if it is not running so it can import the profiles.
                 if (!FuncStreamDock.IsStreamDockRunning())
                 {
                     Logger.Information($"Starting {Parameters.PlatformSoftwareName} for profile installation...");
                     var worker = new WorkerStreamDockStartStop<Config>(Config.Instance, DeckProcessOperation.START) { RefocusWindow = true, RefocusWindowTitle = MainWindow.AppTitle };
                     await worker.Run(System.Threading.CancellationToken.None);
+                    if (IsCanceled || !FuncStreamDock.IsStreamDockRunning())
+                        return false;
                 }
 
                 bool disableLinks = false;
@@ -152,7 +172,7 @@ namespace ProfileManager
                     link.StateOnLinkClicked = TaskState.COMPLETED;
                     link.ClickedCallback = () => { profile.ClickResponse = PackageClickResponse.Ignored; Logger.Debug($"Clicked Ignore for on '{profile.FileName}'"); };
                     ProfileTaskList.Add(task);
-                    ProfileTasks.Add(profile.FileName, task);
+                    ProfileTasks.Add(profile.SourceFileName, task);
                 }
                 return true;
             }
@@ -163,48 +183,6 @@ namespace ProfileManager
             }
 
             return result;
-        }
-
-        protected void ShowStreamDeckConversionNotice()
-        {
-            var task = TaskStore.Add(Localization.Translate("StreamDeck Profile Conversion Required"));
-            task.DisplayCompleted = true;
-            task.AddMessage(Localization.Translate("This package contains StreamDeck {0} files. Please use this plugin to convert the scene for {1}:", Parameters.STREAMDECK_PROFILE_EXTENSION, Parameters.PlatformName), true, false, false, FontWeights.DemiBold);
-
-            var link = task.AddLink(Parameters.STREAMDECK_CONVERSION_PLUGIN_URL, OpenStreamDeckConversionPlugin);
-            link.LinkStyleBold = true;
-            link.LinkFontSize = 12;
-
-            task.AddMessage(Localization.Translate("The extracted profile folder has been opened:\r\n{0}", PackageFile.ProfileFolderPath), false, false, false);
-            task.SetSuccess(Localization.Translate("StreamDeck profiles extracted for conversion."));
-            task.IsCompleted = true;
-        }
-
-        protected static void OpenStreamDeckConversionPlugin()
-        {
-            try
-            {
-                Process.Start(new ProcessStartInfo(Parameters.STREAMDECK_CONVERSION_PLUGIN_URL) { UseShellExecute = true });
-            }
-            catch (Exception ex)
-            {
-                TaskStore.CurrentTask.SetError($"Unable to open conversion plugin page: {ex.Message}");
-                Logger.LogException(ex);
-            }
-        }
-
-        protected void OpenStreamDeckProfileFolder()
-        {
-            try
-            {
-                Logger.Debug($"Opening StreamDeck Profile Folder '{PackageFile.ProfileFolderPath}'");
-                Process.Start(new ProcessStartInfo(PackageFile.ProfileFolderPath) { UseShellExecute = true });
-            }
-            catch (Exception ex)
-            {
-                TaskStore.CurrentTask.SetError($"Unable to open extracted StreamDeck Profile folder: {ex.Message}");
-                Logger.LogException(ex);
-            }
         }
 
         protected static void OpenProfileFile(PackageFile.PackagedProfile profile, TaskModel task)
@@ -234,7 +212,7 @@ namespace ProfileManager
         {
             foreach (var profile in query)
             {
-                if (!ProfileTasks.TryGetValue(profile.FileName, out var task))
+                if (!ProfileTasks.TryGetValue(profile.SourceFileName, out var task))
                     continue;
 
                 foreach (var link in task.Links)
@@ -257,6 +235,8 @@ namespace ProfileManager
                 while (PackageFile.PackagedProfiles.Where(p => p.ClickResponse == PackageClickResponse.NotClicked).Any() && !IsCanceled)
                 {
                     await Task.Delay(waitDelay);
+                    if (IsCanceled)
+                        return false;
                     CompleteTasks(PackageFile.PackagedProfiles.Where(p => p.ClickResponse == PackageClickResponse.Ignored && !p.IsLinkDisabled));
 
                     if (!QueryProfilesInstalled(task, PackageFile.PackagedProfiles.Where(p => p.ClickResponse == PackageClickResponse.Clicked && !p.IsInstalled)))
@@ -272,6 +252,8 @@ namespace ProfileManager
                 {
                     MessageWaitForProfilesInstalled(query, task);
                     await Task.Delay(waitDelay);
+                    if (IsCanceled)
+                        return false;
 
                     if (!QueryProfilesInstalled(task, query))
                         return false;
@@ -281,6 +263,8 @@ namespace ProfileManager
                     query = PackageFile.PackagedProfiles.Where(p => !p.IsInstalled && p.ClickResponse != PackageClickResponse.Ignored);
                 }
 
+                if (IsCanceled)
+                    return false;
                 CompleteTasks(PackageFile.PackagedProfiles.Where(p => !p.IsLinkDisabled));
                 task.SetSuccess(Localization.Translate("All Profiles installed (or ignored)!"));
                 task.IsCompleted = true;
@@ -301,10 +285,13 @@ namespace ProfileManager
             {
                 foreach (var profile in query)
                 {
-                    if ((profile.HasOldProfile && ProfileController.ManifestHasCopy(profile.ProfileName))
-                        || (!profile.HasOldProfile && ProfileController.ManifestNameExits(profile.ProfileName)))
+                    var installed = ProfileController.ProfileManifests.Where(m => !profile.ExistingDirectories.Contains(m.ProfileDirectory)
+                        && !PackageFile.PackagedProfiles.Any(p => p.InstalledDirectory == m.ProfileDirectory)
+                        && (m.ProfileName == profile.ProfileName || ProfileController.MatchManifestCopy(m.ProfileName, profile.ProfileName))).ToList();
+                    if (installed.Count == 1)
                     {
                         profile.IsInstalled = true;
+                        profile.InstalledDirectory = installed[0].ProfileDirectory;
                         Logger.Debug($"Match found for '{profile.ProfileName}'");
                     }
                 }
@@ -318,7 +305,7 @@ namespace ProfileManager
             return true;
         }
 
-        protected async Task SwapProfilesAsync()
+        protected void SwapProfiles()
         {
             var query = PackageFile.PackagedProfiles.Where(p => p.IsInstalled && p.HasOldProfile);
             if (!query.Any())
@@ -327,7 +314,9 @@ namespace ProfileManager
                 return;
             }
 
-            await ProfileController.SwapUpdateManifest([.. query.Select(p => p.ProfileName)]);
+            ProfileController.SwapUpdateManifest([.. query], () => IsCanceled);
+            if (ProfileController.HasError)
+                throw new InvalidOperationException("Profile replacement failed. Review the installation tasks.");
         }
 
         public static bool SetStreamDockWindowForeground()
@@ -343,7 +332,8 @@ namespace ProfileManager
             IsCanceled = true;
             SwapTimer?.Stop();
             PackageFile?.Dispose();
-            PackageFile = null;
+            if (!IsInstalling)
+                PackageFile?.Cleanup();
         }
     }
 }

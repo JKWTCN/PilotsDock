@@ -5,7 +5,6 @@ using CFIT.Installer.LibWorker;
 using CFIT.Installer.Tasks;
 using CFIT.Installer.UI.Tasks;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -134,16 +133,10 @@ namespace ProfileManager
         {
             try
             {
+                if (!LeaveCurrentView())
+                    return;
                 LabelDesc.Text = "";
                 LabelDesc.Visibility = Visibility.Collapsed;
-
-                if (ContentArea.Content is ViewProfileMapper && (ContentArea.Content as ViewProfileMapper).ProfileController.HasChanges && (ContentArea.Content as ViewProfileMapper).IsSaveStateValid())
-                {
-                    Logger.Warning($"Close requested with unsaved Changes");
-                    var result = MessageBox.Show(Localization.Translate("There are unsaved Changes to your Profiles!\r\nSave before closing?"), Localization.Translate("Unsaved Changes"), MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                    if (result == MessageBoxResult.Yes)
-                        (ContentArea.Content as ViewProfileMapper).ProfileController.SaveChanges();
-                }
 
                 if (StoppedStreamDeck)
                 {
@@ -163,18 +156,10 @@ namespace ProfileManager
         {
             try
             {
+                if (!LeaveCurrentView())
+                    return;
                 LabelDesc.Text = "";
                 LabelDesc.Visibility = Visibility.Collapsed;
-
-                if (ContentArea.Content is ViewProfileInstaller && (ContentArea.Content as ViewProfileInstaller).IsPackageActive)
-                {
-                    Logger.Warning($"Profile Mapper requested while Profile Installation in Progress!");
-                    var result = MessageBox.Show(Localization.Translate("A Profile Package is currently opened for Installation!\r\nCancel Installation?"), Localization.Translate("Profile Package Loaded"), MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                    if (result == MessageBoxResult.No)
-                        return;
-                    else
-                        (ContentArea.Content as ViewProfileInstaller).SetStateOpenPackage();
-                }
 
                 if (ProfileController.AppsRunning)
                 {
@@ -183,17 +168,12 @@ namespace ProfileManager
                     if (result == MessageBoxResult.Yes)
                     {
                         Logger.Debug($"Stopping StreamDock ...");
-                        Process[] processes = Process.GetProcessesByName("VSD Craft");
-                        foreach (Process p in processes)
-                        {
-                            if (!p.CloseMainWindow())
-                            {
-                                p.Kill();
-                            }
-                        }
+                        await StartStopStreamDeck(DeckProcessOperation.STOP);
+                        if (ProfileController.AppsRunning)
+                            return;
                     }
                     else
-                        Logger.Warning($"Continued with StreamDock running");
+                        return;
                 }
 
                 ButtonEnable(ButtonProfileInstaller);
@@ -211,12 +191,32 @@ namespace ProfileManager
 
         private void ButtonCreatePackage_Click(object sender, RoutedEventArgs e)
         {
+            if (!LeaveCurrentView())
+                return;
             ContentArea.Content = new ViewCreatePackage();
             ContentArea.CanContentScroll = true;
             ContentArea.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
             ButtonEnable(ButtonProfileInstaller);
             ButtonEnable(ButtonProfileMapper);
             ButtonDisable(ButtonCreatePackage);
+        }
+
+        private bool LeaveCurrentView()
+        {
+            if (ContentArea.Content is ViewProfileInstaller installer)
+            {
+                if (installer.IsPackageActive && MessageBox.Show(Localization.Translate("A Profile Package is currently opened for Installation!\r\nCancel Installation?"), Localization.Translate("Profile Package Loaded"), MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
+                    return false;
+                installer.Dispose();
+            }
+            if (ContentArea.Content is ViewProfileMapper mapper)
+            {
+                mapper.Window_Closing();
+                if (mapper.ProfileController.HasChanges && mapper.ProfileController.HasError)
+                    return false;
+                mapper.Dispose();
+            }
+            return true;
         }
 
         protected async Task StartStopStreamDeck(DeckProcessOperation operation)
@@ -235,7 +235,7 @@ namespace ProfileManager
 
             await worker.Run(System.Threading.CancellationToken.None);
             if (operation == DeckProcessOperation.STOP)
-                StoppedStreamDeck = true;
+                StoppedStreamDeck = !ProfileController.AppsRunning;
             else
                 StoppedStreamDeck = false;
 
@@ -244,16 +244,19 @@ namespace ProfileManager
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            if (ContentArea.Content is ViewProfileMapper)
+            {
+                (ContentArea.Content as ViewProfileMapper)?.Window_Closing();
+                (ContentArea.Content as ViewProfileMapper)?.Dispose();
+            }
+            if (ContentArea.Content is ViewProfileInstaller)
+                (ContentArea.Content as ViewProfileInstaller)?.Dispose();
             if (StoppedStreamDeck)
             {
                 Logger.Information($"Starting StreamDock Software");
                 (new FuncStreamDock()).StartSoftware();
             }
 
-            if (ContentArea.Content is ViewProfileMapper)
-                (ContentArea.Content as ViewProfileMapper)?.Window_Closing();
-            if (ContentArea.Content is ViewProfileInstaller)
-                (ContentArea.Content as ViewProfileInstaller)?.Dispose();
         }
 
         private void Window_Activated(object sender, EventArgs e)

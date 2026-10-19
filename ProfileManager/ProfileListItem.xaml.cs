@@ -146,7 +146,7 @@ namespace ProfileManager
 
         private void InputAircraftNew_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if (e.Key != System.Windows.Input.Key.Enter || e.Key != System.Windows.Input.Key.Return)
+            if (e.Key != System.Windows.Input.Key.Enter && e.Key != System.Windows.Input.Key.Return)
                 return;
 
             ButtonAircraftAdd_Click(null, null);
@@ -233,7 +233,7 @@ namespace ProfileManager
 
         private void InputProfileName_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if (e.Key != System.Windows.Input.Key.Enter || e.Key != System.Windows.Input.Key.Return)
+            if (e.Key != System.Windows.Input.Key.Enter && e.Key != System.Windows.Input.Key.Return)
                 return;
 
             SetProfileName(InputProfileName.Text);

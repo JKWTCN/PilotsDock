@@ -53,7 +53,8 @@ namespace ProfileManager
             if (string.IsNullOrWhiteSpace(path) || !System.IO.Path.Exists(path))
                 return;
 
-            PackageController.LoadPackagePath(path);
+            if (!PackageController.LoadPackagePath(path))
+                return;
             ModelManifest = new(PackageController.Manifest);
             this.DataContext = ModelManifest;
             TextPath.Text = path;

@@ -15,6 +15,10 @@
         </Grid.RowDefinitions>
 
         <!--NOTICE-->
+        <StackPanel Grid.Row="0" Name="AreaRotaryTarget" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,12">
+            <TextBlock Text="Scene target device:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <ComboBox Name="SelectRotaryTarget" DisplayMemberPath="Value" SelectedValuePath="Key" MinWidth="140"/>
+        </StackPanel>
         <TextBlock Grid.Row="0" Name="LabelInstallerNotice" Visibility="Collapsed" FontSize="12" FontWeight="DemiBold" Margin="0,8,0,12" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="384" Text="Note: The Installation will only continue/finish after clicking all the Links and adding the Profiles to the StreamDock Software."/>
 
         <!--TASK STATUS-->
