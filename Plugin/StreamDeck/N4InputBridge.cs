@@ -192,7 +192,7 @@ namespace PilotsDeck.StreamDeck
                 for (IntPtr current = head; current != IntPtr.Zero;)
                 {
                     var info = Marshal.PtrToStructure<Native.DeviceInfo>(current);
-                    bool pro = info.Vendor == 0x5548 && info.Product is 0x1008 or 0x1021;
+                    bool pro = info.Vendor == 0x5548 && info.Product is 0x1008 or 0x1021 or 0x1023;
                     bool n4 = (info.Vendor == 0x6602 && info.Product == 0x1001)
                         || (info.Vendor == 0x6603 && info.Product == 0x1007);
                     string path = Marshal.PtrToStringAnsi(info.Path);
