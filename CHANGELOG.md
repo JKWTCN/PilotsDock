@@ -1,6 +1,27 @@
 # Changelog
 
-## Upstream synchronization (2026-10-19)
+## PilotsDock v0.9.7.1
+
+- Added local StreamDock Knob touchscreen feedback rendering based on the SDK's KnobFeedback approach. The existing single-canvas layout is composed into a 176×112 PNG and sent through `setImage`. Images are scaled uniformly and centered within the output canvas, preserving their aspect ratio and filling unused space with the layout background.
+- Cached the composed image per action and cleared the host title on first display to avoid duplicate title overlays.
+- No build, packaging, or hardware validation was performed for this change.
+
+### Profile Manager
+
+- Added StreamDeck 1.x/2.x/3.x scene conversion to native StreamDock `.SDProfile` files, from standalone exports or `.ppp`/`.zip` packages.
+- Added the scene target device selector: N4 and N4Pro use 10 keys and 4 knobs; XL uses 32 keys and has no knobs. Pages exceeding the key capacity are split into linked pages with their original actions and resources preserved. XL rejects scenes with knob actions during preview.
+- Preserved PilotsDeck/PilotsDock action settings and mapped supported built-in folder, back, page, and hotkey actions to StreamDock. Other plugins still require compatible StreamDock implementations.
+- Fixed device assignment for keypad-only scenes, nested export roots, encoded page directories, and empty or all-zero current page IDs. Import links now display the native `.SDProfile` filename.
+- Removed the automatic StreamDock stop/restart after import and old-profile replacement. Same-device replacement transfers aircraft/simulator mappings; ambiguous matches preserve the old scenes.
+- Fixed profile rename persistence, Enter submission, unsaved-change handling, device-list recovery, and installation task cleanup.
+- Added [import instructions and compatibility details](docs/streamdeck-profile-import.md). Isolated conversion checks and static checks passed; live device verification remains outstanding.
+
+### StreamDock integration
+
+- Added protocol-based discovery of custom StreamDock installation paths in CFIT, compatible with the .NET Framework 4.8 installer.
+- Corrected CFIT's wait condition when stopping StreamDock without waiting for the plugin.
+
+## Upstream synchronization
 
 - Merged PilotsDeck through `d6e1c81` and CFIT through `e53b89a`.
 - Updated .NET package dependencies and the installer runtime requirement to 10.0.13. The upstream application version remains 0.9.7.0.
@@ -15,8 +36,6 @@
 - Added a HttpPost Lua Function doing the same just with the HTTP POST Method
 - Improved Error Logging on Lua Scripts
 - Fixed occasional Issue with InputEvent File being blocked by another Process
-
-
 
 ## v0.9.6
 
