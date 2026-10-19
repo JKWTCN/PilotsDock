@@ -94,6 +94,13 @@ namespace PilotsDeck.Actions.Advanced
                 if (updated)
                     SettingModelUpdated = true;
 
+                // Invalid saved dimensions must not turn valid geometry into NaN during scaling.
+                if (Settings.NormalizeGeometry(CanvasSize))
+                {
+                    Logger.Warning($"Repaired invalid display geometry for Action {ActionID}");
+                    SettingModelUpdated = true;
+                }
+
                 if (Settings.IsNewModel)
                 {
                     Settings.SetSize(CanvasSize);

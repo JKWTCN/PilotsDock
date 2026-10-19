@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 
 namespace PilotsDeck.Actions.Advanced.SettingsModel
 {
@@ -101,6 +102,38 @@ namespace PilotsDeck.Actions.Advanced.SettingsModel
             };
         }
 
+        public bool NormalizeGeometry(PointF canvasSize)
+        {
+            bool updated = false;
+            CanvasSize = NormalizePoint(CanvasSize, canvasSize, true, ref updated);
+            foreach (var element in DisplayElements.Values)
+            {
+                element.Position = NormalizePoint(element.Position, PointF.Empty, false, ref updated);
+                element.Size = NormalizePoint(element.Size, PointF.Empty, false, ref updated);
+                if (!float.IsFinite(element.FontSize) || element.FontSize <= 0)
+                {
+                    element.FontSize = 12;
+                    updated = true;
+                }
+            }
+            return updated;
+        }
+
+        private static float[] NormalizePoint(float[] point, PointF fallback, bool positive, ref bool updated)
+        {
+            float[] result = [fallback.X, fallback.Y];
+            for (int i = 0; i < result.Length; i++)
+            {
+                if (point != null && i < point.Length && float.IsFinite(point[i]) && (!positive || point[i] > 0))
+                    result[i] = point[i];
+                else
+                    updated = true;
+            }
+            if (point?.Length != result.Length)
+                updated = true;
+            return result;
+        }
+
         public virtual void SetSize(PointF size)
         {
             CanvasSize[0] = size.X;
@@ -114,6 +147,7 @@ namespace PilotsDeck.Actions.Advanced.SettingsModel
 
         public virtual bool IsNewModel { get; set; } = true;
         public virtual int BUILD_VERSION { get; set; } = AppConfiguration.BuildModelVersion;
+        [JsonNumberHandling(JsonNumberHandling.AllowNamedFloatingPointLiterals)]
         public virtual float[] CanvasSize { get; set; } = [100, 100];
         public virtual SortedDictionary<int, ModelDisplayElement> DisplayElements { get; set; } = [];
         public virtual SortedDictionary<StreamDeckCommand, SortedDictionary<int, ModelCommand>> ActionCommands { get; set; } = [];

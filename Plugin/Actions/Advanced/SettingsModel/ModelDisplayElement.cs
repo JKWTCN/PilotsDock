@@ -109,8 +109,10 @@ namespace PilotsDeck.Actions.Advanced.SettingsModel
         public virtual DISPLAY_ELEMENT ElementType { get; set; } = type;
         public virtual string Name { get; set; } = "";
         public virtual SortedDictionary<int, ModelManipulator> Manipulators { get; set; } = [];
+        [JsonNumberHandling(JsonNumberHandling.AllowNamedFloatingPointLiterals)]
         public virtual float[] Position {  get; set; } = [0, 0];
         public virtual CenterType Center { get; set; } = CenterType.NONE;
+        [JsonNumberHandling(JsonNumberHandling.AllowNamedFloatingPointLiterals)]
         public virtual float[] Size { get; set; } = [0, 0];
         public virtual ScaleType Scale { get; set; } = ScaleType.NONE;
         public virtual float Rotation { get; set; } = 0;
@@ -151,6 +153,7 @@ namespace PilotsDeck.Actions.Advanced.SettingsModel
 
         //ElementText
         public virtual string FontName { get; set; } = "Arial";
+        [JsonNumberHandling(JsonNumberHandling.AllowNamedFloatingPointLiterals)]
         public virtual float FontSize { get; set; } = 12;
         public virtual FontStyle FontStyle { get; set; } = FontStyle.Regular;
         public virtual string Text { get; set; } = "";
