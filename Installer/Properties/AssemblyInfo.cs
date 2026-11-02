@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 // Allgemeine Informationen über eine Assembly werden über die folgenden 
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die einer Assembly zugeordnet sind.
-[assembly: AssemblyTitle("PilotsDock Installer v0.9.7.1 (2026.10.19.0317)")]
+[assembly: AssemblyTitle("PilotsDock Installer v0.9.7.2 (2026.11.02.0247)")]
 [assembly: AssemblyDescription("Installer Application for PilotsDock")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Fragtality")]
@@ -28,5 +28,5 @@ using System.Runtime.InteropServices;
 //      Buildnummer
 //      Revision
 //
-[assembly: AssemblyVersion("0.9.7.1")]
-[assembly: AssemblyFileVersion("0.9.7.1")]
+[assembly: AssemblyVersion("0.9.7.2")]
+[assembly: AssemblyFileVersion("0.9.7.2")]

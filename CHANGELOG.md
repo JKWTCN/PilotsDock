@@ -1,5 +1,13 @@
 # Changelog
 
+## PilotsDock v0.9.7.2
+
+- Merged PilotsDeck through `11bdf1f` and CFIT through `267c6b8`. The upstream application version remains 0.9.7.0.
+- Kept the developer view available when system tray initialization fails.
+- Updated .NET package dependencies and the installer runtime requirement to 10.0.14.
+- Preserved the local StreamDock device, knob feedback, profile import, and installer adaptations.
+- Built all CFIT packages, published all application projects, and rebuilt the installer; package dependency and payload hash checks passed. Live device validation remains outstanding.
+
 ## PilotsDock v0.9.7.1
 
 - Added local StreamDock Knob touchscreen feedback rendering based on the SDK's KnobFeedback approach. The existing single-canvas layout is composed into a 176×112 PNG and sent through `setImage`. Images are scaled uniformly and centered within the output canvas, preserving their aspect ratio and filling unused space with the layout background.
