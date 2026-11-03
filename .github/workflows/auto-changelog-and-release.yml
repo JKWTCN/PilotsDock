@@ -185,17 +185,43 @@ jobs:
         run: |
           ENCODED_ID=$(jq -rn --arg id "$ANALYSIS_ID" '$id | @uri')
           EXPECTED_SHA256=$(sha256sum PilotsDock-Installer-latest.exe | cut -d ' ' -f 1)
+          RESPONSE_FILE="$RUNNER_TEMP/virustotal-analysis.json"
+          trap 'rm -f "$RESPONSE_FILE"' EXIT
 
           for i in {1..10}; do
             echo "Checking VirusTotal status (attempt $i)..."
 
-            RESPONSE=$(curl --fail-with-body --silent --show-error \
+            : > "$RESPONSE_FILE"
+            CURL_EXIT_CODE=0
+            HTTP_STATUS=$(curl --silent --show-error \
               --connect-timeout 15 --max-time 30 \
               --retry 2 --retry-delay 5 --retry-max-time 90 \
+              --output "$RESPONSE_FILE" --write-out '%{http_code}' \
               --url "https://www.virustotal.com/api/v3/analyses/$ENCODED_ID" \
-              --header "x-apikey: $VT_API_KEY")
+              --header "x-apikey: $VT_API_KEY") || CURL_EXIT_CODE=$?
+            RESPONSE=$(cat "$RESPONSE_FILE")
 
-            STATUS=$(printf '%s' "$RESPONSE" | jq -er '.data.attributes.status | select(. == "queued" or . == "in-progress" or . == "completed")')
+            if [ "$CURL_EXIT_CODE" -ne 0 ]; then
+              echo "::error::VirusTotal request failed (curl exit $CURL_EXIT_CODE, HTTP $HTTP_STATUS)"
+              printf '%s\n' "$RESPONSE"
+              exit "$CURL_EXIT_CODE"
+            fi
+
+            case "$HTTP_STATUS" in
+              200)
+                STATUS=$(printf '%s' "$RESPONSE" | jq -er '.data.attributes.status | select(. == "queued" or . == "in-progress" or . == "completed")')
+                ;;
+              404)
+                echo "::warning::VirusTotal analysis is not available yet (HTTP 404)"
+                printf '%s\n' "$RESPONSE"
+                STATUS="not available (HTTP 404)"
+                ;;
+              *)
+                echo "::error::VirusTotal analysis request failed (HTTP $HTTP_STATUS)"
+                printf '%s\n' "$RESPONSE"
+                exit 1
+                ;;
+            esac
 
             if [ "$STATUS" = "completed" ]; then
               echo "Analysis complete."
