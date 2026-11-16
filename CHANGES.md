@@ -1,16 +1,10 @@
 ### Plugin
-- Updated .NET Packages
-- Keep the developer view available if system tray initialization fails.
-- Render StreamDock Knob feedback locally from the canvas layout and send the composed PNG with setImage.
-
-### Profile Manager
-- Import StreamDeck 1.x/2.x/3.x scenes as native StreamDock .SDProfile files, including scenes inside .ppp packages.
-- Select N4, N4Pro, or XL as the scene target device. Preserve actions, settings, images, folder links, and page order; split pages that exceed the target key capacity.
-- Map N4/N4Pro keypad and knob layouts; support XL's 32 keys and report incompatible knob actions before installation.
-- Fix device assignment for keypad-only scenes, wrapped profile archives, and empty or all-zero current page IDs.
-- Complete imports and old-profile replacement without stopping or restarting StreamDock.
-- Fix profile renaming, mapping saves, device-list recovery, and installer task cleanup.
+- Sync PilotsDeck 0.9.8.0 and updated CFIT dependencies and SimConnect SDK.
+- Initialize global settings, profile mappings, and scripts before starting the refresh timer; wait for global settings before refreshing simulator state.
+- Fall back when setting Windows efficiency mode fails.
+- Return safely when a requested global script is unavailable.
+- Preserve the local StreamDock device, knob feedback, and profile import adaptations.
 
 ### Installer
-- Set .NET 10.0.14 as Target
-- Discover custom StreamDock installation paths through the registered protocol and correct shutdown waiting.
+- Set .NET 10.0.15 as Target.
+- Preserve custom StreamDock discovery and installation behavior.

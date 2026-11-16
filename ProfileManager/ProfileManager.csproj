@@ -76,9 +76,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CFIT.Installer" Version="2026.306.10.2779" />
-    <PackageReference Include="CFIT.AppLogger" Version="2026.306.10.2779" />
-    <PackageReference Include="CFIT.AppTools" Version="2026.306.10.2779" />
+    <PackageReference Include="CFIT.Installer" Version="2026.320.9.2043" />
+    <PackageReference Include="CFIT.AppLogger" Version="2026.320.9.2043" />
+    <PackageReference Include="CFIT.AppTools" Version="2026.320.9.2043" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
   </ItemGroup>
 

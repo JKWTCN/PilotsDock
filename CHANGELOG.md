@@ -1,5 +1,13 @@
 # Changelog
 
+## PilotsDock v0.9.8.0
+
+- Merged PilotsDeck through `28d84d0` (upstream version 0.9.8.0) and CFIT through `8c06162`.
+- Fixed the upstream global-settings startup race, added the helper-window efficiency-mode fallback, and handled unavailable global scripts safely.
+- Updated the SimConnect SDK, .NET dependencies, and installer runtime requirement to 10.0.15.
+- Preserved the local StreamDock device, knob feedback, profile import, and installer adaptations.
+- Rebuilt all CFIT packages as `2026.320.9.2043`, published all application projects, and rebuilt the 0.9.8.0 installer. Package dependency, published DLL, SimConnect SDK, payload hash, and installer version checks passed. Live device validation remains outstanding.
+
 ## PilotsDock v0.9.7.2
 
 - Merged PilotsDeck through `11bdf1f` and CFIT through `267c6b8`. The upstream application version remains 0.9.7.0.
@@ -36,6 +44,19 @@
 - Preserved StreamDock support, localization, and local CFIT package references (`2026.286.9.714`). Run Release.ps1 to rebuild the updated CFIT sources and refresh package versions before release.
 - No build or packaging was performed; the existing PilotsDock installer, payload, and build timestamps are unchanged.
 
+## v0.9.8
+
+### Plugin
+- Updated .NET Packages and SimConnect DLLs
+- Fix Plugin not starting on Wine due to TrayIcon
+- Added Fallback for SimConnect HelperWindow for non-compliant/outdated Windows 11 Installations
+- Fix Race Condition on Global Settings when Plugin is restarted in Flight (MSFS)
+
+### Installer
+- Set .NET 10.0.15 as Target
+- Set StreamDeck 7.6.1 as Target
+
+<br/><br/>
 ## v0.9.7
 
 ### Plugin

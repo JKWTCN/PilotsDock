@@ -188,7 +188,7 @@
   "Name": "PilotsDock",
   "Icon": "Plugin/Images/PluginIcon",
   "URL": "https://github.com/JKWTCN/PilotsDock",
-  "Version": "0.9.7.2",
+  "Version": "0.9.8.0",
   "SDKVersion": 2,
   "Software": {
     "MinimumVersion": "7.1"
